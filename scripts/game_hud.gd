@@ -389,7 +389,7 @@ func _on_animation_state_changed(new_state: String):
 	elif sprint_button:
 		sprint_button.modulate = Color(1, 1, 1)
 
-func _on_objective_updated(index: int, description: String, completed: bool):
+func _on_objective_updated(_index: int, description: String, completed: bool):
 	if objective_label:
 		objective_label.text = description
 		if completed:

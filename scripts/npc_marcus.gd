@@ -119,7 +119,7 @@ func _show_next_line():
 			current_dialogue_index += 1
 			_show_next_line()
 
-func _show_dialogue_line(line: String, index: int, auto_hide_duration: float = 0):
+func _show_dialogue_line(line: String, _index: int, auto_hide_duration: float = 0):
 	if dialogue_ui:
 		dialogue_ui.visible = true
 		if speaker_label:

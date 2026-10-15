@@ -286,7 +286,7 @@ func _on_vehicle_damaged(health: float):
 	if health_bar:
 		health_bar.value = health
 
-func _on_objective_updated(index: int, description: String, completed: bool):
+func _on_objective_updated(_index: int, description: String, completed: bool):
 	if objective_label:
 		objective_label.text = description
 		if completed:

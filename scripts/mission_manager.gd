@@ -292,7 +292,7 @@ func _on_player_moved(distance: float):
 		if distance >= objectives[0].required_distance:
 			complete_objective(0)
 
-func _on_interacted(id: String, interactable: Interactable):
+func _on_interacted(id: String, _interactable: Interactable):
 	print("[MissionManager] Interacted: ", id, " current: ", current_objective)
 	
 	if id.begins_with("vehicle"):
@@ -312,19 +312,19 @@ func _on_interacted(id: String, interactable: Interactable):
 		else:
 			emit_signal("show_notification", "Not yet - complete previous objectives first", 2.5)
 
-func _on_vehicle_enter_requested(veh: VehicleBody3D):
+func _on_vehicle_enter_requested(_veh: VehicleBody3D):
 	print("[MissionManager] Vehicle enter requested")
 	if current_objective == 2:
 		# Will complete when actually entered
 		pass
 
-func _on_vehicle_exit_requested(veh: VehicleBody3D):
+func _on_vehicle_exit_requested(_veh: VehicleBody3D):
 	print("[MissionManager] Vehicle exit requested")
 	if current_objective == 5:
 		# Will complete when actually exited
 		pass
 
-func _on_vehicle_entered(veh: VehicleBody3D):
+func _on_vehicle_entered(_veh: VehicleBody3D):
 	print("[MissionManager] Vehicle entered")
 	has_entered_vehicle = true
 	if current_objective == 2:
@@ -341,7 +341,7 @@ func _on_vehicle_entered(veh: VehicleBody3D):
 		complete_objective(1)
 		complete_objective(2)
 
-func _on_vehicle_exited(veh: VehicleBody3D):
+func _on_vehicle_exited(_veh: VehicleBody3D):
 	print("[MissionManager] Vehicle exited")
 	if current_objective == 5:
 		complete_objective(5)

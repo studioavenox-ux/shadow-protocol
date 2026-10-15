@@ -304,7 +304,7 @@ func _animate_skeleton_idle(_delta: float):
 		t.basis = t.basis.rotated(Vector3.RIGHT, sin(time * 0.5) * 0.05)
 		skeleton.set_bone_pose(idx, t)
 
-func _animate_skeleton_walk(_delta: float, freq: float, amp: float):
+func _animate_skeleton_walk(_delta: float, freq: float, _amp: float):
 	var cycle = time * freq
 	var swing = sin(cycle) * 0.6
 	var arm_swing = sin(cycle) * 0.8

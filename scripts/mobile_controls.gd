@@ -36,7 +36,7 @@ func _input(event):
 	if event is InputEventKey:
 		_handle_keyboard_input(event)
 
-func _handle_keyboard_input(event: InputEventKey):
+func _handle_keyboard_input(_event: InputEventKey):
 	var move = Vector2.ZERO
 	if Input.is_action_pressed("move_forward"):
 		move.y -= 1
