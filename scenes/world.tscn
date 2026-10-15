@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3 uid="uid://f5w6o7r8l9d0m1a2"]
+[gd_scene load_steps=44 format=3 uid="uid://f5w6o7r8l9d0m1a2"]
 
 [ext_resource type="Script" path="res://scripts/world.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/mission_manager.gd" id="2"]
@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://m1a2r3k4e5r6d7e8" path="res://scenes/destination_marker.tscn" id="7"]
 [ext_resource type="PackedScene" uid="uid://r1e2s3i4d5e6n7t8" path="res://scenes/building_residential.tscn" id="8"]
 [ext_resource type="PackedScene" uid="uid://c1o2m3m4e5r6c7i8" path="res://scenes/building_commercial.tscn" id="9"]
+[ext_resource type="PackedScene" uid="uid://n1i2g3h4t5f6a7l8" path="res://scenes/nightfall.tscn" id="10"]
+[ext_resource type="PackedScene" uid="uid://d1r2i3v4i5n6g7h8" path="res://ui/driving_hud.tscn" id="11"]
 
 [sub_resource type="Environment" id="Environment_world"]
 background_mode=1
@@ -625,7 +627,7 @@ surface_material_override/0=SubResource("StandardMaterial3D_marcus")
 
 [node name="ExploreTrigger" type="Area3D" parent="MissionTriggers"]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-collision_layer=8
+collision_layer=16
 collision_mask=2
 monitoring=true
 
@@ -634,18 +636,34 @@ shape=SubResource("BoxShape3D_trigger")
 
 [node name="DestinationTrigger" type="Area3D" parent="MissionTriggers"]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 40)
-collision_layer=8
-collision_mask=2
+collision_layer=16
+collision_mask=6
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MissionTriggers/DestinationTrigger"]
 shape=SubResource("BoxShape3D_trigger")
 
 [node name="GarageEntranceTrigger" type="Area3D" parent="MissionTriggers"]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 60)
-collision_layer=8
-collision_mask=2
+collision_layer=16
+collision_mask=6
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MissionTriggers/GarageEntranceTrigger"]
+shape=SubResource("BoxShape3D_trigger")
+
+[node name="VehicleTrigger" type="Area3D" parent="MissionTriggers"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 2, -8)
+collision_layer=16
+collision_mask=2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MissionTriggers/VehicleTrigger"]
+shape=SubResource("BoxShape3D_trigger")
+
+[node name="ParkingTrigger" type="Area3D" parent="MissionTriggers"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 75)
+collision_layer=16
+collision_mask=6
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MissionTriggers/ParkingTrigger"]
 shape=SubResource("BoxShape3D_trigger")
 
 [node name="PlayerSpawn" type="Marker3D" parent="."]
@@ -654,12 +672,32 @@ transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -10)
 [node name="Player" parent="." instance=ExtResource("4")]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -10)
 
+[node name="NIGHTFALL" parent="." instance=ExtResource("10")]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0.8, -8)
+
+[node name="VehicleInfoPanel" type="Node3D" parent="."]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -12)
+
+[node name="InfoLabel" type="Label3D" parent="VehicleInfoPanel"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+text="NIGHTFALL
+Black Sports Sedan
+[Enter Vehicle]
+Top Speed: 240 km/h"
+font_size=24
+modulate=Color(0.9490196, 0.9490196, 0.9411765, 1)
+outline_size=4
+outline_modulate=Color(0.03137255, 0.03529412, 0.043137256, 1)
+billboard=1
+
 [node name="MissionManager" type="Node" parent="." groups=["mission_manager"]]
 script=ExtResource("2")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
 [node name="GameHUD" parent="UI" instance=ExtResource("5")]
+
+[node name="DrivingHUD" parent="UI" instance=ExtResource("11")]
 
 [node name="PauseMenu" parent="UI" instance=ExtResource("6")]
 

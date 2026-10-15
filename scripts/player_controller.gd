@@ -94,10 +94,9 @@ func _ready():
 		if child is CollisionShape3D and _collision_shape == null:
 			_collision_shape = child
 	
-	# Setup collision layers
+	# Setup collision layers - Phase 3: Player layer 2 (bitmask 2), collides with World (1) + Vehicle (4)
 	collision_layer = 2 # Player
-	collision_mask = 1 # World + Interactable (4) + Trigger (8) - we include 1+4+8 = 13 but keep simple
-	collision_mask = 1 | 4 | 8
+	collision_mask = 1 | 4 # World + Vehicle - triggers and interactables are Areas, not physics
 	
 	print("[Player] Alex Mercer initialized at ", global_position)
 	print("[Player] CharacterRoot: ", _character_root != null, " Animator: ", _animator != null)

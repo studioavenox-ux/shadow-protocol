@@ -21,9 +21,9 @@ var original_material: Material = null
 @onready var highlight_mesh: MeshInstance3D = null
 
 func _ready():
-	# Setup collision layers
-	collision_layer = 0
-	collision_mask = 0
+	# Setup collision layers - Interactable layer 4 = bitmask 8, detects Player layer 2 = bitmask 2
+	collision_layer = 8
+	collision_mask = 2
 	# We use Area to detect player
 	monitoring = true
 	monitorable = true

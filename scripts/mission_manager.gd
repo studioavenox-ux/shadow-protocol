@@ -1,7 +1,7 @@
 extends Node
 
-# Mission Manager - Phase 2 Improved
-# Handles "A NEW BEGINNING" with destination marker, dialogue, objective validation
+# Mission Manager - Phase 3: Drivable Vehicles
+# Handles "A NEW BEGINNING" with vehicle integration
 
 signal objective_updated(index: int, description: String, completed: bool)
 signal objective_completed(index: int)
@@ -18,7 +18,7 @@ var current_mission_name: String = "A NEW BEGINNING"
 var mission_state: MissionState = MissionState.NOT_STARTED
 var current_objective: int = 0
 
-# Objectives for A NEW BEGINNING - Phase 2 with validation
+# Objectives Phase 3 with vehicle
 var objectives = [
 	{
 		"id": "explore",
@@ -27,25 +27,58 @@ var objectives = [
 		"completed": false,
 		"required_distance": 30.0,
 		"optional": false,
-		"marker_visible": false
+		"marker_visible": false,
+		"type": "explore"
 	},
 	{
-		"id": "find_destination",
-		"title": "Locate the underground garage",
-		"description": "Find the underground garage - look for the red beacon north of your position.",
+		"id": "find_nightfall",
+		"title": "Find the NIGHTFALL sedan",
+		"description": "Locate the black NIGHTFALL sports sedan. Look for it near the starting area.",
 		"completed": false,
-		"trigger_area": "DestinationTrigger",
+		"trigger_area": "VehicleTrigger",
 		"optional": false,
-		"marker_visible": true
+		"marker_visible": true,
+		"type": "find_vehicle"
 	},
 	{
-		"id": "reach_garage",
-		"title": "Reach the garage entrance",
-		"description": "Make your way to the garage entrance marked by the beacon. Follow the road north.",
+		"id": "enter_vehicle",
+		"title": "Enter the NIGHTFALL",
+		"description": "Approach the NIGHTFALL and press ENTER VEHICLE to get in.",
+		"completed": false,
+		"interaction_id": "vehicle_nightfall",
+		"optional": false,
+		"marker_visible": true,
+		"type": "enter_vehicle"
+	},
+	{
+		"id": "drive_to_garage",
+		"title": "Drive to Iron Gate Garage",
+		"description": "Drive north to the Iron Gate Garage. Follow the red beacon.",
 		"completed": false,
 		"trigger_area": "GarageEntranceTrigger",
 		"optional": false,
-		"marker_visible": true
+		"marker_visible": true,
+		"type": "drive"
+	},
+	{
+		"id": "park_vehicle",
+		"title": "Park near the destination",
+		"description": "Park the NIGHTFALL safely inside or near the garage entrance.",
+		"completed": false,
+		"trigger_area": "ParkingTrigger",
+		"optional": false,
+		"marker_visible": true,
+		"type": "park"
+	},
+	{
+		"id": "exit_vehicle",
+		"title": "Exit the vehicle",
+		"description": "Stop the car and exit safely. [Press EXIT or E]",
+		"completed": false,
+		"interaction_id": "vehicle_exit",
+		"optional": false,
+		"marker_visible": false,
+		"type": "exit_vehicle"
 	},
 	{
 		"id": "meet_marcus",
@@ -54,7 +87,8 @@ var objectives = [
 		"completed": false,
 		"interaction_id": "marcus_reed",
 		"optional": false,
-		"marker_visible": true
+		"marker_visible": true,
+		"type": "interact"
 	},
 	{
 		"id": "complete",
@@ -62,48 +96,54 @@ var objectives = [
 		"description": "You have reunited with Marcus. Welcome back to Blackwater City.",
 		"completed": false,
 		"optional": false,
-		"marker_visible": false
+		"marker_visible": false,
+		"type": "complete"
 	}
 ]
 
 var player_distance_traveled: float = 0.0
 var has_found_destination: bool = false
 var has_reached_garage: bool = false
+var has_entered_vehicle: bool = false
+var has_parked: bool = false
 var dialogue_active: bool = false
 
 @onready var player: CharacterBody3D = null
 var destination_marker: Node3D = null
+var vehicle: VehicleBody3D = null
 var dialogue_ui: CanvasLayer = null
 
 func _ready():
-	print("[MissionManager] Phase 2 - Initializing mission: ", current_mission_name)
-	# Find player
+	print("[MissionManager] Phase 3 - Vehicle mission: ", current_mission_name)
 	await get_tree().process_frame
 	player = get_tree().get_first_node_in_group("player")
 	if not player:
 		player = get_node_or_null("../Player")
 	
-	if player:
-		if player.has_signal("player_moved"):
-			player.player_moved.connect(_on_player_moved)
+	if player and player.has_signal("player_moved"):
+		player.player_moved.connect(_on_player_moved)
 	
-	# Find destination marker
-	destination_marker = get_node_or_null("../GarageComplex/DestinationMarker") or get_node_or_null("../../GarageComplex/DestinationMarker") or get_tree().get_first_node_in_group("destination_marker")
-	if not destination_marker:
-		# Search recursively
-		destination_marker = _find_marker(get_tree().current_scene)
-	
+	# Find markers and vehicle
+	destination_marker = _find_marker(get_tree().current_scene)
 	if destination_marker:
 		destination_marker.visible = false
 		print("[MissionManager] Destination marker found")
 	
-	# Find dialogue UI
+	vehicle = get_tree().get_first_node_in_group("vehicle")
+	if not vehicle:
+		vehicle = _find_vehicle(get_tree().current_scene)
+	
+	if vehicle:
+		print("[MissionManager] Vehicle found: ", vehicle.name)
+		if vehicle.has_signal("player_entered_vehicle"):
+			vehicle.player_entered_vehicle.connect(_on_vehicle_entered)
+		if vehicle.has_signal("player_exited_vehicle"):
+			vehicle.player_exited_vehicle.connect(_on_vehicle_exited)
+	
 	dialogue_ui = get_node_or_null("../DialogueUI") or get_node_or_null("../../DialogueUI")
 	
-	# Connect to interactables
 	_setup_interactable_connections()
 	
-	# Start mission after short delay
 	await get_tree().create_timer(1.2).timeout
 	start_mission()
 
@@ -118,6 +158,17 @@ func _find_marker(node: Node) -> Node3D:
 			return found
 	return null
 
+func _find_vehicle(node: Node) -> VehicleBody3D:
+	if node == null:
+		return null
+	if node is VehicleBody3D:
+		return node as VehicleBody3D
+	for child in node.get_children():
+		var found = _find_vehicle(child)
+		if found:
+			return found
+	return null
+
 func _setup_interactable_connections():
 	var interactables = get_tree().get_nodes_in_group("interactable")
 	for inter in interactables:
@@ -127,6 +178,12 @@ func _setup_interactable_connections():
 		if inter.has_signal("mission_trigger_completed"):
 			if not inter.mission_trigger_completed.is_connected(_on_marcus_dialogue_finished):
 				inter.mission_trigger_completed.connect(_on_marcus_dialogue_finished)
+		if inter.has_signal("vehicle_enter_requested"):
+			if not inter.vehicle_enter_requested.is_connected(_on_vehicle_enter_requested):
+				inter.vehicle_enter_requested.connect(_on_vehicle_enter_requested)
+		if inter.has_signal("vehicle_exit_requested"):
+			if not inter.vehicle_exit_requested.is_connected(_on_vehicle_exit_requested):
+				inter.vehicle_exit_requested.connect(_on_vehicle_exit_requested)
 	
 	_search_interactables(get_tree().current_scene)
 
@@ -139,6 +196,12 @@ func _search_interactables(node: Node):
 		if node.has_signal("mission_trigger_completed"):
 			if not node.mission_trigger_completed.is_connected(_on_marcus_dialogue_finished):
 				node.mission_trigger_completed.connect(_on_marcus_dialogue_finished)
+		if node.has_signal("vehicle_enter_requested"):
+			if not node.vehicle_enter_requested.is_connected(_on_vehicle_enter_requested):
+				node.vehicle_enter_requested.connect(_on_vehicle_enter_requested)
+		if node.has_signal("vehicle_exit_requested"):
+			if not node.vehicle_exit_requested.is_connected(_on_vehicle_exit_requested):
+				node.vehicle_exit_requested.connect(_on_vehicle_exit_requested)
 	for child in node.get_children():
 		_search_interactables(child)
 
@@ -158,7 +221,6 @@ func _update_current_objective():
 		return
 	
 	var obj = objectives[current_objective]
-	# Update description with progress for explore
 	if obj.id == "explore":
 		var progress = int(min(player_distance_traveled, obj.required_distance))
 		obj.description = "Get familiar with Blackwater City. Move around to explore. (%d/30m)" % progress
@@ -178,21 +240,14 @@ func _update_marker_visibility():
 	var obj = objectives[current_objective]
 	var should_visible = obj.get("marker_visible", false) and mission_state == MissionState.IN_PROGRESS
 	destination_marker.visible = should_visible
-	
-	if should_visible:
-		print("[MissionManager] Destination marker visible for objective: ", obj.id)
-	else:
-		print("[MissionManager] Destination marker hidden")
 
 func complete_objective(index: int):
 	if index < 0 or index >= objectives.size():
 		return
 	if objectives[index].completed:
 		return
-	
-	# Validation: cannot skip objectives
 	if index != current_objective:
-		print("[MissionManager] Cannot complete objective ", index, " - current is ", current_objective, " - skipping not allowed")
+		print("[MissionManager] Cannot skip objective ", index, " current ", current_objective)
 		return
 	
 	objectives[index].completed = true
@@ -201,7 +256,6 @@ func complete_objective(index: int):
 	print("[MissionManager] Objective completed: ", objectives[index].title)
 	emit_signal("show_notification", "✓ " + objectives[index].title, 2.8)
 	
-	# Move to next objective
 	if index == current_objective:
 		current_objective += 1
 		if current_objective < objectives.size():
@@ -212,62 +266,104 @@ func complete_objective(index: int):
 
 func _on_player_moved(distance: float):
 	player_distance_traveled = distance
-	# Update explore progress
 	if current_objective == 0 and not objectives[0].completed:
 		var obj = objectives[0]
 		var progress = int(min(distance, obj.required_distance))
 		obj.description = "Get familiar with Blackwater City. Move around to explore. (%d/30m)" % progress
 		emit_signal("objective_updated", 0, obj.description, false)
-		
 		if distance >= objectives[0].required_distance:
 			complete_objective(0)
 
 func _on_interacted(id: String, interactable: Interactable):
-	print("[MissionManager] Interacted with: ", id, " current objective: ", current_objective)
+	print("[MissionManager] Interacted: ", id, " current: ", current_objective)
 	
-	# Only allow Marcus interaction if we're at objective 3
-	if id == "marcus_reed":
-		if current_objective == 3:
-			# Start dialogue sequence
+	if id.begins_with("vehicle"):
+		if id == "vehicle_nightfall" and current_objective == 2:
+			# Enter handled via vehicle signal, but mark if needed
+			pass
+		elif id == "marcus_reed":
+			if current_objective == 6:
+				dialogue_active = true
+				emit_signal("dialogue_started", "Marcus Reed")
+			else:
+				emit_signal("show_notification", "Not yet - complete previous objectives first", 2.5)
+	elif id == "marcus_reed":
+		if current_objective == 6:
 			dialogue_active = true
 			emit_signal("dialogue_started", "Marcus Reed")
-			print("[MissionManager] Starting dialogue with Marcus")
-			# Don't complete yet - wait for dialogue to finish
-			# The NPC will emit mission_trigger_completed when dialogue done
 		else:
 			emit_signal("show_notification", "Not yet - complete previous objectives first", 2.5)
-			print("[MissionManager] Marcus interaction blocked - wrong objective")
+
+func _on_vehicle_enter_requested(veh: VehicleBody3D):
+	print("[MissionManager] Vehicle enter requested")
+	if current_objective == 2:
+		# Will complete when actually entered
+		pass
+
+func _on_vehicle_exit_requested(veh: VehicleBody3D):
+	print("[MissionManager] Vehicle exit requested")
+	if current_objective == 5:
+		# Will complete when actually exited
+		pass
+
+func _on_vehicle_entered(veh: VehicleBody3D):
+	print("[MissionManager] Vehicle entered")
+	has_entered_vehicle = true
+	if current_objective == 2:
+		complete_objective(2)
+		# Also complete find_nightfall if not yet
+		if current_objective == 1 and not objectives[1].completed:
+			# Find was via trigger, but if they entered directly, complete it
+			objectives[1].completed = true
+			emit_signal("objective_completed", 1)
+			current_objective = 3
+			_update_current_objective()
+	elif current_objective == 1:
+		# If they find and enter immediately
+		complete_objective(1)
+		complete_objective(2)
+
+func _on_vehicle_exited(veh: VehicleBody3D):
+	print("[MissionManager] Vehicle exited")
+	if current_objective == 5:
+		complete_objective(5)
 
 func _on_marcus_dialogue_finished():
-	print("[MissionManager] Marcus dialogue finished, completing objectives")
-	if current_objective == 3:
-		complete_objective(3)
+	print("[MissionManager] Marcus dialogue finished")
+	if current_objective == 6:
+		complete_objective(6)
 		await get_tree().create_timer(1.0).timeout
-		complete_objective(4)
+		complete_objective(7)
 
 func trigger_area_entered(area_id: String):
-	print("[MissionManager] Trigger area entered: ", area_id, " current objective: ", current_objective)
+	print("[MissionManager] Trigger entered: ", area_id, " current: ", current_objective)
 	match area_id:
 		"ExploreTrigger":
-			# Explore trigger can complete objective 0 as alternative to distance
-			if current_objective == 0 and not objectives[0].completed:
-				if player_distance_traveled > 10.0: # Need at least some movement
-					complete_objective(0)
-		"DestinationTrigger":
-			# Must be at objective 1, cannot skip
+			if current_objective == 0 and not objectives[0].completed and player_distance_traveled > 10.0:
+				complete_objective(0)
+		"VehicleTrigger":
 			if current_objective == 1:
 				complete_objective(1)
+		"DestinationTrigger":
+			if current_objective == 3:
+				complete_objective(3)
 				has_found_destination = true
-			elif current_objective < 1:
-				emit_signal("show_notification", "Explore the area first", 2.0)
+				emit_signal("show_notification", "Iron Gate Garage ahead - park safely", 3.0)
+			elif current_objective < 3 and current_objective > 1:
+				emit_signal("show_notification", "Enter the NIGHTFALL first", 2.0)
 		"GarageEntranceTrigger":
-			# Must be at objective 2
-			if current_objective == 2:
-				complete_objective(2)
+			if current_objective == 3:
+				complete_objective(3)
 				has_reached_garage = true
-				emit_signal("show_notification", "Entering underground garage...", 2.5)
-			elif current_objective < 2:
-				emit_signal("show_notification", "Find the garage first", 2.0)
+		"ParkingTrigger":
+			if current_objective == 4:
+				# Check if vehicle is stopped
+				if vehicle and vehicle.get_speed_kmh() < 5.0:
+					complete_objective(4)
+					has_parked = true
+					emit_signal("show_notification", "Parked - exit vehicle", 2.5)
+				else:
+					emit_signal("show_notification", "Stop the vehicle to park", 2.0)
 
 func _complete_mission():
 	if mission_state == MissionState.COMPLETED:
@@ -286,7 +382,7 @@ func _complete_mission():
 		GameManager._save_game_data()
 	
 	await get_tree().create_timer(3.0).timeout
-	emit_signal("show_notification", "Welcome to Blackwater City, Alex.", 3.5)
+	emit_signal("show_notification", "Welcome to Blackwater City, Alex. The NIGHTFALL is yours.", 3.5)
 	emit_signal("dialogue_finished")
 
 func _fail_mission(reason: String):
@@ -317,4 +413,4 @@ func is_objective_completed(index: int) -> bool:
 	return false
 
 func can_interact_with_marcus() -> bool:
-	return current_objective == 3 and mission_state == MissionState.IN_PROGRESS
+	return current_objective == 6 and mission_state == MissionState.IN_PROGRESS
