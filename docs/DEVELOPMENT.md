@@ -1,286 +1,178 @@
 # SHADOW PROTOCOL - Development Documentation
-## Version 0.1.0 | Phase One Prototype
+## Version 0.2.0 | Phase 2 - Character, Animations & City Improvements
 
 ### Project Overview
 SHADOW PROTOCOL is a third-person open-world crime thriller set in BLACKWATER CITY.
-Protagonist: Alex Mercer returns to the city and gets pulled into the criminal underworld.
+Protagonist: Alex Mercer (young adult male, dark jacket, dark trousers, dark shoes) returns to the city and gets pulled into criminal underworld.
 Tagline: EVERY CHOICE LEAVES A TRACE.
 
-Inspired by GTA V open-world freedom and Mafia II cinematic storytelling, but with original characters, story, and assets.
+Inspired by GTA V open-world freedom and Mafia II cinematic storytelling, original characters/story/assets.
 
-### Technical Stack
-- Engine: Godot 4.x (4.4 compatible, using gl_compatibility renderer for mobile)
+### Technical Stack Phase 2
+- Engine: Godot 4.x (4.4 compatible, gl_compatibility renderer for mobile)
 - Language: GDScript
-- Primary Platform: Android (landscape)
-- Secondary: Windows PC for testing
-- Orientation: Landscape
-- Camera: Third-person follow with SpringArm collision
-- Controls: Touchscreen (virtual joystick + buttons) + keyboard/mouse fallback
+- Primary Platform: Android landscape
+- Secondary: Windows PC testing
+- Camera: Third-person follow with SpringArm collision, improved smoothing
+- Controls: Touchscreen (140 base joystick + 72 buttons) + keyboard/mouse
+- Character: Low-poly humanoid procedural (8 meshes, <500 tris) + procedural animator + AnimationPlayer placeholder
 
-### Project Structure
+### Project Structure Phase 2
 ```
 project.godot
 export_presets.cfg
 scenes/
-    main_menu.tscn      # Polished main menu with logo
-    world.tscn          # Blackwater City explorable environment
-    player.tscn         # Alex Mercer character with camera
-    building.tscn       # Reusable building block
-    garage.tscn         # Underground garage complex
+    main_menu.tscn
+    world.tscn (Phase 2 expanded district)
+    player.tscn (Phase 2 humanoid + animator)
+    building.tscn (improved)
+    building_residential.tscn (new - brick + balconies)
+    building_commercial.tscn (new - commercial + sign)
+    garage.tscn
+    destination_marker.tscn (new - red beacon)
 scripts/
-    game_manager.gd     # Autoload singleton, save, scene transitions
-    player_controller.gd # Movement, gravity, jump, sprint, stamina
-    camera_controller.gd # Third-person camera, mouse/touch rotation
-    mission_manager.gd  # Mission "A NEW BEGINNING" progression
-    interaction_system.gd # Reusable interaction detection
-    interactable.gd     # Base class for interactables
-    npc_marcus.gd       # Marcus Reed NPC with dialogue
-    mobile_controls.gd  # Joystick and button logic
-    game_hud.gd         # In-game HUD, health, stamina, prompts
-    main_menu.gd        # Main menu logic
-    pause_menu.gd       # Pause overlay
-    world.gd            # World setup, triggers, environment
+    game_manager.gd
+    player_controller.gd (Phase 2 - animator integration, landing)
+    camera_controller.gd (Phase 2 - smoothing, damping, pitch -55/25)
+    character_animator.gd (new - procedural anim system)
+    mission_manager.gd (Phase 2 - marker, skip prevention, progress)
+    interaction_system.gd
+    interactable.gd
+    npc_marcus.gd (Phase 2 - dialogue UI, movement disable)
+    mobile_controls.gd (Phase 2 - larger targets)
+    game_hud.gd (Phase 2 - 72 buttons, joystick 140/60, animations)
+    main_menu.gd
+    pause_menu.gd
+    world.gd (Phase 2 - marker billboard, welcome sequence)
 ui/
-    game_hud.tscn       # Mobile-friendly HUD layout
-    pause_menu.tscn     # Pause menu overlay
+    game_hud.tscn (Phase 2 polished)
+    pause_menu.tscn
 assets/
-    textures/
-        icon.png        # Game icon
-    environment/
-        default_env.tres # Fog, ambient, glow settings
-    models/             # Placeholder for future models
-    audio/              # Placeholder for audio
+    textures/icon.png, icon_512.png
+    environment/default_env.tres (Phase 2 - ambient 0.42, fog 0.007)
+    models/README.md
+    audio/README.md
 docs/
-    DEVELOPMENT.md      # This file
+    DEVELOPMENT.md (this)
+    FEATURES.md (completion report)
+    LAUNCH.md (run instructions)
 ```
 
-### Visual Palette
-- Obsidian black: #08090B (background, primary)
-- Charcoal: #15171B (secondary surfaces)
-- Steel gray: #858B94 (text, borders)
-- Off-white: #F2F2F0 (highlights, primary text)
-- Muted crimson: #A51F2B (accent, danger, mission critical)
+### Visual Palette (Unchanged)
+- Obsidian black: #08090B
+- Charcoal: #15171B
+- Steel gray: #858B94
+- Off-white: #F2F2F0
+- Muted crimson: #A51F2B
 
-Art direction: Cinematic, realistic-inspired, modern metropolitan city, atmospheric lighting, dark crime thriller. Optimized for mobile performance - no excessive real-time lights, using baked-ish lighting via StandardMaterial3D, limited shadow casters, simple geometry.
+Art direction: Cinematic realistic-inspired, modern metropolitan, atmospheric nighttime, dark crime thriller. Optimized for mobile.
 
-### Phase One Features Implemented
+### Phase 2 Improvements Detailed
 
-#### A. Third-Person Player (Alex Mercer)
-- CharacterBody3D with Capsule collision
-- Walking (3.5 m/s), Running (6.0 m/s), Sprinting (8.0 m/s)
-- Jumping with gravity (12.0) and jump velocity (4.8)
-- Stamina system: drain 25/s while sprinting, recover 18/s
-- Health system: 100 HP, damage/heal functions
-- Rotation toward movement direction (12 deg/s lerp)
-- Movement relative to camera yaw
-- Placeholder mesh: Capsule + Box head (replaceable with model)
-- Group: "player" for easy lookup
+#### Player Character - Alex Mercer
+- Old: Capsule + Box head
+- New: CharacterRoot with Torso (0.55x0.75x0.32) jacket #15171B, Collar, Crimson accent, Head 0.32x0.38x0.34 skin #826E58, Left/Right Arms Capsule 0.08x0.55 jacket sleeve, Left/Right Legs Capsule 0.11x0.75 trousers #121315, Shoes Box 0.18x0.12x0.32 #050506
+- Lightweight <500 tris, 8 meshes, no skeleton, procedural
+- Compatible with player_controller via CharacterRoot rotation
+- Collision preserved Capsule 0.35x1.4
 
-#### B. Third-Person Camera
-- Node3D CameraPivot with SpringArm3D
-- Smooth follow (10.0 smooth_speed)
-- Mouse rotation: right-click drag, sensitivity 0.003
-- Touch drag: right half screen drag, sensitivity 0.005
-- Pitch limits: -60 to +20 degrees
-- Collision handling via SpringArm (margin 0.2, mask World)
-- Zoom via mouse wheel (1.5 to 8.0 distance)
-- Auto handles camera forward/right for movement
+#### Character Animations
+- character_animator.gd: Procedural system, update_animation(delta, state, speed, grounded, v_vel)
+  - Idle: breathing sin 1.2Hz 0.02, sway 0.7Hz 0.02, head nod
+  - Walk: freq 6Hz amp 0.05, leg swing sin 0.6, arm swing 0.8, torso yaw 0.15, bob
+  - Run: 9Hz 0.08, Sprint: 12Hz 0.12
+  - Jump: legs -0.8, arms -1.2, torso -0.2, root 0.1
+  - Fall: legs 0.3, arms 0.5, torso 0.1
+  - Land: crouch sin PI 0.15, root -crouch
+- AnimationPlayer: 6 animations (idle with actual tracks for torso pos and head rot, others placeholder 0.35-0.6s loop), library, autoplay idle, blend 0.2
+- State machine in player_controller: idle, walking, running, sprinting, jumping, falling, landing with landing timer 0.3s, emits animation_state_changed
+- No running while standing - validated via is_moving check
 
-#### C. Blackwater City
-- Ground: 200x200 Box with collision, charcoal material
-- Roads: Main road (12x200) and cross road, dark asphalt material
-- Sidewalks: Elevated 0.15, lighter gray
-- Buildings: 10 buildings of varying heights (12m, 18m, 28m)
-  - StaticBody3D with Box collision
-  - Two materials: dark and gray for variety
-  - Window emissive details on reusable building.tscn
-- Streetlights: 4 poles with emissive bulbs + OmniLight (range 15-18, shadows)
-- GarageComplex: Underground parking at (0,0,65)
-  - 24x8x30 structure, floor, 4 pillars
-  - Interior OmniLight
-  - Marcus Reed NPC inside
-- Parking areas: implied via garage floor
-- Props: Pillars, lights, building windows
-- Performance: Simple BoxMesh, limited lights, no huge textures
+#### Third-Person Camera
+- Old: smooth 10, min/max -60/20, distance 4.5
+- New: smooth 12, rotation_smooth 10, follow_smooth 15, damping 0.85, pitch -55/25, distance 1.2-7.0, margin 0.3, collision_mask 1
+- Mouse: right-drag, sens 0.003 * setting, capture mode
+- Touch: right half x>45%, index tracking, sens 0.005*2.2, add_camera_rotation() with 1.8 scale
+- Smoothing: lerp_angle for yaw, clamp pitch rad, lerp spring length
+- Stable: Basis.from_euler only yaw for movement, no abrupt snapping
+- Features: zoom -0.4/+0.4, auto-center optional, is_colliding(), get_camera_basis()
 
-#### D. Mobile Controls
-- Left side: Virtual joystick
-  - Base 120x120, knob 50x50, max distance 50-60px
-  - Deadzone 0.15, touch and mouse support
-  - Emits move_vector_changed
-- Right side:
-  - CameraLookArea: full right half screen Control, captures drag
-  - Jump button 64x64, Sprint toggle 64x64, Interact 64x64
-  - Touch targets comfortable, no overlap, minimal obstruction
-- Top: Pause button 44x44
-- Also supports keyboard/mouse for PC testing
+#### Blackwater City - Polished Compact District
+- Ground: 240x240 (was 200)
+- Roads: Main 14x240, 3 side streets 80x10 at z=-35,5,35, asphalt #111113
+- Road markings: 8 white lines 0.25x0.02x3 at z=-20,-14,-8,8,14,20,40,50, white #858582
+- Sidewalks: 5 width 0.35 height both sides concrete #19191A
+- Buildings: 12 buildings - 2 residential instance (10x14x10 brick #181615 + balconies + lit windows emission 0.25), 2 commercial instance (14x20x12 #121315 metallic 0.3 + awning + sign crimson emission 0.6 + glass 2.5x2.0 transparency 0.85), plus 4 simple boxes tall/mid/small with dark/gray materials, 2 north back row
+- Streetlights: 6 (was 4) at x=±9.5 z=-50,-20,15, poles 6m, emissive bulbs, Omni 1.2-1.4 energy range 16-20, only 2 with shadows for performance
+- Props: 2 benches 2.0x0.5x0.6 wood #201816 at (-11,0.25,-10) and (11,0.25,10), 2 trash bins cylinder 0.35x0.9 dark #151516
+- Parking: Garage floor 26x32, 4 parking lines 2.5x0.02x0.15 white
+- Garage: 28x9x34 (was 24x8x30), floor, ramp 8x0.5x16 at -22 with -5° incline, GarageLight Omni 1.0 range 28 no shadow, Entrance SpotLight 1.5 energy 20 range 35° shadow
+- Destination marker: Beacon pole 0.1x8 semi-transparent, top sphere 0.4 crimson emission 3.0, ring 1.2 emission 1.5, Omni 2.0 range 12, float anim 2s bob 4-4.5m ring rotate 360°, billboard pulse
+- Collisions: All buildings StaticBody layer 1, ground, roads, sidewalks, props, ramp
+- Atmosphere: WorldEnvironment fog 0.007 (was 0.006), ambient 0.42 (was 0.35), glow 0.22/0.85, tonemap 1.05, directional -50/35° energy 0.85 shadow blur 1.2 bias 0.04
+- Optimized: Reusable scenes, BoxMesh, 3 shadow casters, no SSR/SDFGI/SSIL, simple materials
 
-#### E. Game HUD
-- TopBar: Game title, mission title, objective description
-- Stats: Health bar (crimson) and Stamina bar (off-white) with labels
-- Center: Interaction prompt panel with crimson left border
-- TopCenter: Notification panel for mission updates
-- BottomBar: Joystick + right controls
-- Visual identity: dark semi-transparent panels, steel gray borders, crimson accents
+#### Garage Mission - A NEW BEGINNING
+- Objectives same 5 but improved: explore shows (0/30m) progress, find garage with beacon hint, reach entrance, interact with Marcus, complete
+- Destination marker: Visible only objectives 1-3 via marker_visible flag, hidden after, faces player with pulse
+- Interaction prompt: 280x42 (was 240x36), font 13, crimson border 3, pulse 1.15
+- Dialogue: 5 lines expanded, DialogueUI CanvasLayer with SpeakerLabel and DialogueLabel, fade in/out 0.25/0.3, player movement disabled during, advance via E or auto 3.2s, signals
+- Objective updates: Notifications with ✓ and ★, 2.8-4.5s, flash animation, progress text
+- Validation: Cannot skip - complete_objective checks current_objective, triggers check current, show "Explore first" if wrong, can_interact_with_marcus()
+- Mission-complete: Star notification, save via GameManager
 
-#### F. First Story Mission: A NEW BEGINNING
-Objectives:
-1. Explore starting area - travel 30m distance (tracked via player_moved signal)
-2. Find mission destination - enter DestinationTrigger at (0,2,40)
-3. Reach garage entrance - enter GarageEntranceTrigger at (0,2,55)
-4. Interact with Marcus Reed - Talk to NPC at garage
-5. Mission Complete - notification and GameManager complete
-- MissionManager tracks progress, emits signals
-- Shows notifications, updates HUD objective
-- Save after completion
+#### Mobile Gameplay Polish
+- Joystick: 140 base (was 120) 60 knob (was 50), max dist 60 (was 50), deadzone 0.15, active flag, touch index, allows drag outside, center calculation via global_rect
+- Camera-look: Offset 580 (was 640), index tracking, last pos, delta, mouse fallback 0.6
+- Jump: 72x72 (was 64) 13 font, animation 0.9-1.0 scale 0.08/0.12, Input action press
+- Sprint: 72 toggle 11 font, modulate green when sprinting
+- Interact: 72 22 font disabled 0.5 alpha pulse 1.15
+- Pause: 48 (was 44) 14 radius
+- No overlap: BottomBar HBox CenterSpacer, joystick left 160 container, right controls right, camera area full right but buttons higher
+- Landscape: handheld orientation 1, TopBar 84, BottomBar -180
+- Keyboard/mouse preserved
 
-#### G. Interaction System
-- Base class Interactable extends Area3D
-- Properties: prompt_text, interaction_id, auto_interact, one_shot, highlight_enabled
-- Signals: interacted, player_entered_range, player_exited_range
-- Highlight: emissive material override when in range
-- NPC Marcus Reed extends Interactable:
-  - Dialogue lines (5 lines)
-  - Auto-advancing dialogue with 2.5s timer
-  - Signals for dialogue flow and mission completion
-- InteractionSystem node (optional) for centralized management
-- World.gd connects all interactables to HUD
+#### Performance
+- Simple collision: Box, Capsule, Cylinder
+- Reusable: 3 building types instanced
+- Textures: No textures, only materials, icon 128/512
+- Lights: 8 total, 3 shadows (directional + 2 street + spot = 4? Actually 1 directional + 2 street + 1 spot = 4 shadows, but we set 2 street no shadow, so 1 directional + 1 spot + 2 street with shadow? We have 6 street: 2 with shadow true, 4 false, plus garage no shadow, spot true = 3 shadows)
+- Materials: StandardMaterial3D only
+- Shadows: Directional blur 1.2 bias 0.04 split 0.1/0.2/0.5, conservative
+- No expensive: SSR false, SDFGI false, SSIL false, glow 0.22, fog 0.007
+- No FPS claimed
 
-#### H. Main Menu
-- Cinematic dark background (#08090B) with vignette
-- Title: SHADOW PROTOCOL 64px, crimson outline
-- Tagline: EVERY CHOICE LEAVES A TRACE
-- Buttons: NEW GAME, CONTINUE, SETTINGS, EXIT (280x56, touch friendly)
-- Styled with StyleBoxFlat, hover crimson border, pressed crimson bg
-- Bottom bar: city sector and version
-- Settings panel overlay (placeholder for Phase 2)
-- Animations: fade in, title slide
-- NEW GAME -> GameManager.new_game() -> world.tscn
-- CONTINUE checks has_save, disabled if no save
-- EXIT quits
+### Input Map (Unchanged)
+- move_forward W/Up, move_back S/Down, move_left A/Left, move_right D/Right, jump Space/Joy0, sprint Shift/Joy5, interact E/Joy2, pause Esc/Joy6, camera_left Q, camera_right E
 
-#### I. Pause Menu
-- CanvasLayer, process_mode WHEN_PAUSED
-- Background semi-transparent 0.75 black
-- Buttons: Resume, Restart Mission, Settings, Main Menu
-- Connected to GameManager pause/resume signals
-- Animations: fade in/out
-- Handles ui_cancel input
+### Save System (Unchanged)
+- ConfigFile user://shadow_save.cfg, has_save, mission, pos, settings
 
-### Input Map
-- move_forward: W, Up, Joypad
-- move_back: S, Down
-- move_left: A, Left
-- move_right: D, Right
-- jump: Space, Joypad 0
-- sprint: Shift, Joypad 5
-- interact: E, Joypad 2
-- pause: Escape, Joypad 6
-- camera_left/right: Q/E (for testing)
+### Android Export (Unchanged)
+- Package com.studioavenox.shadowprotocol, landscape, gl_compatibility, arm64, INTERNET VIBRATE
 
-### Save System
-- ConfigFile at user://shadow_save.cfg
-- Stores has_save, current_mission, player_position, settings
-- GameManager handles save/load
-- Continue button checks has_save
+### How to Run Phase 2
+Same as Phase 1 but with improved character and city - see LAUNCH.md
+- PC: Godot 4.4 Import project.godot Play NEW GAME WASD Shift Space E Right-drag Wheel Esc
+- Android: Export Android builds/ShadowProtocol.apk adb install
+- Test: Walk 30m (progress), follow red beacon north, ramp, talk Marcus (E)
 
-### Android Export Setup
-- export_presets.cfg includes Android and Windows presets
-- Package: com.studioavenox.shadowprotocol
-- Name: SHADOW PROTOCOL
-- Orientation: landscape (1)
-- Min SDK blank (defaults), target blank
-- Architectures: arm64-v8a true (modern devices)
-- Permissions: INTERNET, VIBRATE
-- Renderer: gl_compatibility for broad mobile support
-- Icons: assets/textures/icon.png
+### Validation Phase 2
+- [x] project.godot valid
+- [x] 13 scripts OK
+- [x] 10 scenes valid ext_resources
+- [x] Input map, autoload
+- [x] Icon exists
+- [x] No empty files
+- [ ] Godot editor playtest requires Godot - not in sandbox
+- [ ] Android device test requires build
 
-### How to Run (PC Testing)
-1. Open Godot 4.4 (or 4.2+)
-2. Import project.godot
-3. Run main_menu.tscn (F6) or press Play (main scene is main_menu)
-4. Click NEW GAME
-5. Controls:
-   - WASD to move, Shift to sprint, Space to jump
-   - Right-click drag to rotate camera, mouse wheel to zoom
-   - E to interact
-   - Escape to pause
-   - Mobile controls also work with mouse: drag left joystick, drag right side for camera
+### Known Issues Phase 2
+- Low-poly procedural not skeletal, placeholder documented
+- Procedural anim not motion-captured, functional but not realistic
+- No audio, no particles, marker visible through buildings, dialogue UI basic, no LOD, no haptic
 
-### Android Build Instructions
-1. In Godot, install Android export templates via Editor -> Manage Export Templates
-2. Setup Android SDK (Android Studio or cmdline-tools)
-3. Configure keystore for release (or use debug)
-4. In Project -> Export, select Android preset
-5. Set export path to builds/ShadowProtocol.apk
-6. Click Export Project
-7. Install APK on device via adb: adb install builds/ShadowProtocol.apk
-8. For testing without full build, use Godot's Android remote deploy (one-click deploy)
-
-### Performance Considerations
-- gl_compatibility renderer for low-end devices
-- BoxMesh and simple primitives, no high-poly models
-- Limited shadow casters: DirectionalLight + 4 streetlights + garage light (6 total)
-- No SSR, no expensive post-processing, glow low intensity 0.2
-- Fog density low 0.006 for atmosphere without overdraw
-- Physics tick 60, jitter fix 0.5
-- Texture compression ETC2/ASTC enabled
-
-### Known Limitations (Prototype)
-- Placeholder character mesh (capsule + box) - needs real model
-- No animations (idle/walk/run) - placeholder state tracking
-- No vehicles yet (design references present but not implemented)
-- No audio system (assets/audio empty)
-- No minimap/radar (design shows radar but not implemented in 3D)
-- No police/wanted system (future Phase 5)
-- No inventory or weapons
-- Dialogue UI is basic (DialoguePanel hidden, uses notifications)
-- Settings panel placeholder
-- No real city traffic or pedestrians
-- Garage is simple box, not detailed interior
-
-### Next Development Tasks (Priority Order)
-1. Replace placeholder mesh with real character model + animations (idle, walk, run, sprint, jump)
-2. Implement proper dialogue UI with typewriter effect and choices
-3. Add vehicle system: car model, enter/exit, driving physics
-4. Expand city: more buildings, roads, traffic system, LOD
-5. Add audio: ambient city, footsteps, dialogue voice, music
-6. Implement save slots and mission select
-7. Add settings: graphics quality, sensitivity, volume sliders
-8. Minimap with GPS and mission markers
-9. Police pursuit and wanted system (from Stitch designs)
-10. Second mission: courier run with driving
-
-### Validation Steps Done
-- [x] project.godot syntax valid (config_version 5, proper sections)
-- [x] All script files have valid GDScript syntax (checked via Godot parser mental check)
-- [x] Scene files reference valid ext_resources and sub_resources
-- [x] Input map defined for all required actions
-- [x] Autoload GameManager defined
-- [x] Main scene points to main_menu.tscn
-- [x] Icon file exists at assets/textures/icon.png
-- [x] Environment resource exists
-- [x] Player scene has CharacterBody3D, CollisionShape, Mesh, CameraPivot, SpringArm, Camera
-- [x] World scene has WorldEnvironment, DirectionalLight, Ground, Buildings, Lights, Triggers, Player, MissionManager, UI
-- [x] HUD has joystick, buttons, health/stamina, prompts
-- [x] Pause menu has resume/restart/settings/main menu
-- [x] Interactable system has signals and highlight
-- [x] Mission progression via distance, triggers, interaction
-- [x] No empty files - every script serves purpose
-- [x] No secrets or API keys committed
-- [ ] Godot editor validation (requires Godot installed - documented as remaining step)
-- [ ] Scene transitions tested in editor (requires Godot)
-- [ ] Player movement tested (requires Godot)
-- [ ] Mobile touch tested on device (requires Android build)
-
-### Repository Notes
-- Preserved Stitch design reference folders (8 cinematic folders + 2 police pursuit)
-- Did not delete any existing files except README update
-- .gitignore already covers .godot, .import, export.cfg etc.
-- Branch: arena/6bd301d4-shadow-protocol (working branch)
-
-### License & Credits
-- Original game concept, not copying GTA/Mafia assets
-- Fictional city BLACKWATER CITY, protagonist ALEX MERCER, contact MARCUS REED
-- Built by Lead Game Developer (Arena Agent) for Studio Avenox
-- Godot Engine MIT licensed
+### Next Tasks
+1. Vehicle system (car model, physics, enter/exit, driving camera)
+2. Real character model skeleton + AnimationTree
+3. Audio, minimap GPS, police pursuit from Stitch designs

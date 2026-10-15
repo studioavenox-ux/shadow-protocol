@@ -1,0 +1,93 @@
+[gd_scene load_steps=10 format=3 uid="uid://c1o2m3m4e5r6c7i8"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_main"]
+size=Vector3(14, 20, 12)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_commercial"]
+albedo_color=Color(0.12, 0.13, 0.15, 1)
+roughness=0.6
+metallic=0.3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_main"]
+size=Vector3(14, 20, 12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sign"]
+size=Vector3(8, 1.5, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sign"]
+albedo_color=Color(0.08235294, 0.09019608, 0.10588235, 1)
+emission_enabled=true
+emission=Color(0.64705884, 0.12156863, 0.16862746, 1)
+emission_energy_multiplier=0.6
+roughness=0.5
+
+[sub_resource type="BoxMesh" id="BoxMesh_window_large"]
+size=Vector3(2.5, 2.0, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glass"]
+albedo_color=Color(0.15, 0.18, 0.22, 1)
+roughness=0.1
+metallic=0.9
+transparency=1
+albedo_color=Color(0.15, 0.18, 0.22, 0.85)
+
+[sub_resource type="BoxMesh" id="BoxMesh_awning"]
+size=Vector3(10, 0.3, 2.0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_awning"]
+albedo_color=Color(0.08, 0.08, 0.09, 1)
+roughness=0.9
+
+[node name="BuildingCommercial" type="StaticBody3D"]
+collision_layer=1
+
+[node name="Main" type="MeshInstance3D" parent="."]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+mesh=SubResource("BoxMesh_main")
+surface_material_override/0=SubResource("StandardMaterial3D_commercial")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape=SubResource("BoxShape3D_main")
+
+[node name="Sign" type="MeshInstance3D" parent="."]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14, 6.1)
+mesh=SubResource("BoxMesh_sign")
+surface_material_override/0=SubResource("StandardMaterial3D_sign")
+
+[node name="Awning" type="MeshInstance3D" parent="."]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 7)
+mesh=SubResource("BoxMesh_awning")
+surface_material_override/0=SubResource("StandardMaterial3D_awning")
+
+[node name="Windows" type="Node3D" parent="."]
+
+[node name="Window1" type="MeshInstance3D" parent="Windows"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 6, 6.05)
+mesh=SubResource("BoxMesh_window_large")
+surface_material_override/0=SubResource("StandardMaterial3D_glass")
+
+[node name="Window2" type="MeshInstance3D" parent="Windows"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 6.05)
+mesh=SubResource("BoxMesh_window_large")
+surface_material_override/0=SubResource("StandardMaterial3D_glass")
+
+[node name="Window3" type="MeshInstance3D" parent="Windows"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 6, 6.05)
+mesh=SubResource("BoxMesh_window_large")
+surface_material_override/0=SubResource("StandardMaterial3D_glass")
+
+[node name="Window4" type="MeshInstance3D" parent="Windows"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5, 10, 6.05)
+mesh=SubResource("BoxMesh_window_large")
+surface_material_override/0=SubResource("StandardMaterial3D_glass")
+
+[node name="Window5" type="MeshInstance3D" parent="Windows"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 6.05)
+mesh=SubResource("BoxMesh_window_large")
+surface_material_override/0=SubResource("StandardMaterial3D_glass")
+
+[node name="Window6" type="MeshInstance3D" parent="Windows"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 10, 6.05)
+mesh=SubResource("BoxMesh_window_large")
+surface_material_override/0=SubResource("StandardMaterial3D_glass")

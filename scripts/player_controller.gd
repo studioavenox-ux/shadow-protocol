@@ -1,7 +1,8 @@
 extends CharacterBody3D
 
-# Player Controller - Alex Mercer
+# Player Controller - Alex Mercer (Phase 2 Improved)
 # Third-person movement, gravity, jumping, sprinting, stamina, health
+# Now with CharacterAnimator integration and improved humanoid rig support
 
 @export_group("Movement")
 @export var walk_speed: float = 3.5
@@ -22,6 +23,8 @@ extends CharacterBody3D
 
 @export_group("References")
 @export var camera_pivot_path: NodePath = NodePath("CameraPivot")
+@export var character_root_path: NodePath = NodePath("CharacterRoot")
+@export var animator_path: NodePath = NodePath("CharacterAnimator")
 
 var stamina: float = 100.0
 var health: float = 100.0
@@ -35,23 +38,30 @@ var camera_input: Vector2 = Vector2.ZERO
 
 # Internal
 var _camera_pivot: Node3D = null
+var _character_root: Node3D = null
+var _animator = null
 var _mesh_instance: MeshInstance3D = null
 var _collision_shape: CollisionShape3D = null
 var _animation_state: String = "idle"
+var _prev_state: String = "idle"
 
 signal stamina_changed(current: float, max_val: float)
 signal health_changed(current: float, max_val: float)
 signal player_moved(distance: float)
 signal player_jumped
+signal animation_state_changed(new_state: String)
 
 var total_distance_traveled: float = 0.0
 var last_position: Vector3 = Vector3.ZERO
+var _was_on_floor: bool = true
+var _landing_timer: float = 0.0
 
 func _ready():
 	add_to_group("player")
 	stamina = max_stamina
 	health = max_health
 	last_position = global_position
+	_was_on_floor = is_on_floor()
 	
 	# Get references
 	if camera_pivot_path != NodePath(""):
@@ -59,18 +69,38 @@ func _ready():
 	else:
 		_camera_pivot = get_node_or_null("CameraPivot")
 	
-	# Find mesh and collision
+	if character_root_path != NodePath(""):
+		_character_root = get_node_or_null(character_root_path)
+	else:
+		_character_root = get_node_or_null("CharacterRoot")
+		if not _character_root:
+			# Fallback to old mesh instance name
+			for child in get_children():
+				if child.name == "CharacterRoot" or child.name == "MeshInstance3D":
+					_character_root = child as Node3D
+					break
+	
+	if animator_path != NodePath(""):
+		_animator = get_node_or_null(animator_path)
+	else:
+		_animator = get_node_or_null("CharacterAnimator")
+		if not _animator and _character_root:
+			_animator = _character_root.get_node_or_null("CharacterAnimator")
+	
+	# Find mesh and collision (legacy support)
 	for child in get_children():
-		if child is MeshInstance3D:
+		if child is MeshInstance3D and _mesh_instance == null:
 			_mesh_instance = child
-		if child is CollisionShape3D:
+		if child is CollisionShape3D and _collision_shape == null:
 			_collision_shape = child
 	
 	# Setup collision layers
 	collision_layer = 2 # Player
-	collision_mask = 1 # World + Interactable
+	collision_mask = 1 # World + Interactable (4) + Trigger (8) - we include 1+4+8 = 13 but keep simple
+	collision_mask = 1 | 4 | 8
 	
 	print("[Player] Alex Mercer initialized at ", global_position)
+	print("[Player] CharacterRoot: ", _character_root != null, " Animator: ", _animator != null)
 	print("[Player] Walk: ", walk_speed, " Run: ", run_speed, " Sprint: ", sprint_speed)
 	emit_signal("stamina_changed", stamina, max_stamina)
 	emit_signal("health_changed", health, max_health)
@@ -81,6 +111,7 @@ func _physics_process(delta):
 		velocity.z = move_toward(velocity.z, 0, deceleration * delta)
 		_apply_gravity(delta)
 		move_and_slide()
+		_update_animation(delta)
 		return
 	
 	# Handle gravity
@@ -98,6 +129,19 @@ func _physics_process(delta):
 	# Apply movement
 	move_and_slide()
 	
+	# Landing detection
+	if not _was_on_floor and is_on_floor():
+		# Just landed
+		_landing_timer = 0.3
+		_animation_state = "landing"
+		if _animator and _animator.has_method("play_animation"):
+			_animator.play_animation("landing")
+		print("[Player] Landed")
+	_was_on_floor = is_on_floor()
+	
+	if _landing_timer > 0:
+		_landing_timer -= delta
+	
 	# Track distance for mission
 	var moved = global_position.distance_to(last_position)
 	if moved > 0.01:
@@ -105,8 +149,9 @@ func _physics_process(delta):
 		emit_signal("player_moved", total_distance_traveled)
 	last_position = global_position
 	
-	# Update animation state (for future animation system)
+	# Update animation state
 	_update_movement_state()
+	_update_animation(delta)
 
 func _apply_gravity(delta):
 	if not is_on_floor():
@@ -123,6 +168,9 @@ func _handle_jump():
 			stamina -= 10.0
 			emit_signal("stamina_changed", stamina, max_stamina)
 			emit_signal("player_jumped")
+			_animation_state = "jumping"
+			if _animator and _animator.has_method("play_animation"):
+				_animator.play_animation("jumping")
 			print("[Player] Jumped")
 
 var _mobile_jump_queued: bool = false
@@ -179,9 +227,10 @@ func _handle_movement(delta):
 		velocity.z = lerp(velocity.z, direction.z * target_speed, accel * delta)
 		
 		# Rotate character to face movement direction
-		if _mesh_instance:
+		var target_root = _character_root if _character_root else _mesh_instance
+		if target_root:
 			var target_angle = atan2(direction.x, direction.z)
-			_mesh_instance.rotation.y = lerp_angle(_mesh_instance.rotation.y, target_angle, rotation_speed * delta)
+			target_root.rotation.y = lerp_angle(target_root.rotation.y, target_angle, rotation_speed * delta)
 	else:
 		# Decelerate
 		velocity.x = move_toward(velocity.x, 0, deceleration * delta)
@@ -204,6 +253,9 @@ func _handle_stamina(delta):
 			emit_signal("stamina_changed", stamina, max_stamina)
 
 func _update_movement_state():
+	if _landing_timer > 0:
+		return # Keep landing state for short duration
+	
 	var new_state = "idle"
 	if not is_on_floor():
 		if velocity.y > 0:
@@ -219,8 +271,23 @@ func _update_movement_state():
 			new_state = "walking"
 	
 	if new_state != _animation_state:
+		_prev_state = _animation_state
 		_animation_state = new_state
-		# Future: trigger animation
+		emit_signal("animation_state_changed", _animation_state)
+
+func _update_animation(delta: float):
+	if _animator == null:
+		return
+	
+	var speed = Vector2(velocity.x, velocity.z).length()
+	var grounded = is_on_floor()
+	
+	if _animator.has_method("update_animation"):
+		_animator.update_animation(delta, _animation_state, speed, grounded, velocity.y)
+	elif _animator.has_method("play_animation"):
+		# Fallback
+		if _animation_state != _prev_state:
+			_animator.play_animation(_animation_state)
 
 # Mobile controls interface
 func set_move_input(input: Vector2):
@@ -267,6 +334,9 @@ func get_stamina_percent() -> float:
 
 func get_health_percent() -> float:
 	return health / max_health
+
+func get_animation_state() -> String:
+	return _animation_state
 
 func disable_movement():
 	can_move = false

@@ -1,0 +1,97 @@
+[gd_scene load_steps=10 format=3 uid="uid://r1e2s3i4d5e6n7t8"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_main"]
+size=Vector3(10, 14, 10)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_brick"]
+albedo_color=Color(0.18, 0.16, 0.15, 1)
+roughness=0.9
+metallic=0.05
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_main"]
+size=Vector3(10, 14, 10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_balcony"]
+size=Vector3(3, 0.2, 1.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_concrete"]
+albedo_color=Color(0.22, 0.22, 0.23, 1)
+roughness=0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_window"]
+size=Vector3(1.4, 1.6, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_window_lit"]
+albedo_color=Color(0.25, 0.22, 0.18, 1)
+emission_enabled=true
+emission=Color(0.95, 0.85, 0.5, 1)
+emission_energy_multiplier=0.25
+roughness=0.2
+metallic=0.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_window_dark"]
+albedo_color=Color(0.08, 0.09, 0.11, 1)
+roughness=0.3
+metallic=0.7
+
+[node name="BuildingResidential" type="StaticBody3D"]
+collision_layer=1
+collision_mask=1
+
+[node name="Main" type="MeshInstance3D" parent="."]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
+mesh=SubResource("BoxMesh_main")
+surface_material_override/0=SubResource("StandardMaterial3D_brick")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, 0)
+shape=SubResource("BoxShape3D_main")
+
+[node name="Balconies" type="Node3D" parent="."]
+
+[node name="Balcony1" type="MeshInstance3D" parent="Balconies"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 5.6)
+mesh=SubResource("BoxMesh_balcony")
+surface_material_override/0=SubResource("StandardMaterial3D_concrete")
+
+[node name="Balcony2" type="MeshInstance3D" parent="Balconies"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 5.6)
+mesh=SubResource("BoxMesh_balcony")
+surface_material_override/0=SubResource("StandardMaterial3D_concrete")
+
+[node name="Balcony3" type="MeshInstance3D" parent="Balconies"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11, 5.6)
+mesh=SubResource("BoxMesh_balcony")
+surface_material_override/0=SubResource("StandardMaterial3D_concrete")
+
+[node name="Windows" type="Node3D" parent="."]
+
+[node name="Window1" type="MeshInstance3D" parent="Windows"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 5, 5.05)
+mesh=SubResource("BoxMesh_window")
+surface_material_override/0=SubResource("StandardMaterial3D_window_lit")
+
+[node name="Window2" type="MeshInstance3D" parent="Windows"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 5, 5.05)
+mesh=SubResource("BoxMesh_window")
+surface_material_override/0=SubResource("StandardMaterial3D_window_dark")
+
+[node name="Window3" type="MeshInstance3D" parent="Windows"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 8.5, 5.05)
+mesh=SubResource("BoxMesh_window")
+surface_material_override/0=SubResource("StandardMaterial3D_window_lit")
+
+[node name="Window4" type="MeshInstance3D" parent="Windows"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 8.5, 5.05)
+mesh=SubResource("BoxMesh_window")
+surface_material_override/0=SubResource("StandardMaterial3D_window_lit")
+
+[node name="Window5" type="MeshInstance3D" parent="Windows"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 11.5, 5.05)
+mesh=SubResource("BoxMesh_window")
+surface_material_override/0=SubResource("StandardMaterial3D_window_dark")
+
+[node name="Window6" type="MeshInstance3D" parent="Windows"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 11.5, 5.05)
+mesh=SubResource("BoxMesh_window")
+surface_material_override/0=SubResource("StandardMaterial3D_window_lit")

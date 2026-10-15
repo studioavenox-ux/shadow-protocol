@@ -3,109 +3,109 @@
 [ext_resource type="Script" path="res://scripts/game_hud.gd" id="1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_topbar"]
-bg_color=Color(0.03137255, 0.03529412, 0.043137256, 0.85)
+bg_color=Color(0.03137255, 0.03529412, 0.043137256, 0.88)
 corner_radius_top_left=0
 corner_radius_top_right=0
-corner_radius_bottom_right=6
-corner_radius_bottom_left=6
+corner_radius_bottom_right=8
+corner_radius_bottom_left=8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_bg"]
 bg_color=Color(0.08235294, 0.09019608, 0.10588235, 1)
-corner_radius_top_left=2
-corner_radius_top_right=2
-corner_radius_bottom_right=2
-corner_radius_bottom_left=2
+corner_radius_top_left=3
+corner_radius_top_right=3
+corner_radius_bottom_right=3
+corner_radius_bottom_left=3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_fg"]
 bg_color=Color(0.64705884, 0.12156863, 0.16862746, 1)
-corner_radius_top_left=2
-corner_radius_top_right=2
-corner_radius_bottom_right=2
-corner_radius_bottom_left=2
+corner_radius_top_left=3
+corner_radius_top_right=3
+corner_radius_bottom_right=3
+corner_radius_bottom_left=3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stamina_fg"]
 bg_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-corner_radius_top_left=2
-corner_radius_top_right=2
-corner_radius_bottom_right=2
-corner_radius_bottom_left=2
+corner_radius_top_left=3
+corner_radius_top_right=3
+corner_radius_bottom_right=3
+corner_radius_bottom_left=3
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joystick_base"]
-bg_color=Color(0.08235294, 0.09019608, 0.10588235, 0.6)
-border_width_left=1
-border_width_top=1
-border_width_right=1
-border_width_bottom=1
-border_color=Color(0.52156866, 0.54509807, 0.5803922, 0.3)
-corner_radius_top_left=60
-corner_radius_top_right=60
-corner_radius_bottom_right=60
-corner_radius_bottom_left=60
+bg_color=Color(0.08235294, 0.09019608, 0.10588235, 0.65)
+border_width_left=2
+border_width_top=2
+border_width_right=2
+border_width_bottom=2
+border_color=Color(0.52156866, 0.54509807, 0.5803922, 0.35)
+corner_radius_top_left=70
+corner_radius_top_right=70
+corner_radius_bottom_right=70
+corner_radius_bottom_left=70
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joystick_knob"]
-bg_color=Color(0.52156866, 0.54509807, 0.5803922, 0.8)
-corner_radius_top_left=25
-corner_radius_top_right=25
-corner_radius_bottom_right=25
-corner_radius_bottom_left=25
+bg_color=Color(0.52156866, 0.54509807, 0.5803922, 0.9)
+corner_radius_top_left=30
+corner_radius_top_right=30
+corner_radius_bottom_right=30
+corner_radius_bottom_left=30
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
-bg_color=Color(0.08235294, 0.09019608, 0.10588235, 0.85)
+bg_color=Color(0.08235294, 0.09019608, 0.10588235, 0.9)
 border_width_left=1
 border_width_top=1
 border_width_right=1
 border_width_bottom=1
-border_color=Color(0.52156866, 0.54509807, 0.5803922, 0.3)
-corner_radius_top_left=12
-corner_radius_top_right=12
-corner_radius_bottom_right=12
-corner_radius_bottom_left=12
+border_color=Color(0.52156866, 0.54509807, 0.5803922, 0.35)
+corner_radius_top_left=14
+corner_radius_top_right=14
+corner_radius_bottom_right=14
+corner_radius_bottom_left=14
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_active"]
-bg_color=Color(0.64705884, 0.12156863, 0.16862746, 0.9)
+bg_color=Color(0.64705884, 0.12156863, 0.16862746, 0.95)
 border_width_left=1
 border_width_top=1
 border_width_right=1
 border_width_bottom=1
-border_color=Color(0.9490196, 0.9490196, 0.9411765, 0.5)
-corner_radius_top_left=12
-corner_radius_top_right=12
-corner_radius_bottom_right=12
-corner_radius_bottom_left=12
+border_color=Color(0.9490196, 0.9490196, 0.9411765, 0.6)
+corner_radius_top_left=14
+corner_radius_top_right=14
+corner_radius_bottom_right=14
+corner_radius_bottom_left=14
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prompt"]
-bg_color=Color(0.03137255, 0.03529412, 0.043137256, 0.9)
-border_width_left=2
+bg_color=Color(0.03137255, 0.03529412, 0.043137256, 0.92)
+border_width_left=3
 border_width_top=0
 border_width_right=0
 border_width_bottom=0
 border_color=Color(0.64705884, 0.12156863, 0.16862746, 1)
-corner_radius_top_left=4
-corner_radius_top_right=4
-corner_radius_bottom_right=4
-corner_radius_bottom_left=4
+corner_radius_top_left=6
+corner_radius_top_right=6
+corner_radius_bottom_right=6
+corner_radius_bottom_left=6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_notif"]
-bg_color=Color(0.08235294, 0.09019608, 0.10588235, 0.92)
+bg_color=Color(0.08235294, 0.09019608, 0.10588235, 0.94)
 border_width_left=1
 border_width_top=1
 border_width_right=1
 border_width_bottom=1
-border_color=Color(0.64705884, 0.12156863, 0.16862746, 0.5)
-corner_radius_top_left=4
-corner_radius_top_right=4
-corner_radius_bottom_right=4
-corner_radius_bottom_left=4
+border_color=Color(0.64705884, 0.12156863, 0.16862746, 0.6)
+corner_radius_top_left=6
+corner_radius_top_right=6
+corner_radius_bottom_right=6
+corner_radius_bottom_left=6
 
 [node name="GameHUD" type="CanvasLayer"]
 script=ExtResource("1")
 
 [node name="TopBar" type="Panel" parent="."]
-custom_minimum_size=Vector2(0, 80)
+custom_minimum_size=Vector2(0, 84)
 layout_mode=3
 anchors_preset=10
 anchor_right=1.0
-offset_bottom=80.0
+offset_bottom=84.0
 grow_horizontal=2
 theme_override_styles/panel=SubResource("StyleBoxFlat_topbar")
 
@@ -114,15 +114,15 @@ layout_mode=1
 anchors_preset=15
 anchor_right=1.0
 anchor_bottom=1.0
-offset_left=12.0
-offset_top=8.0
-offset_right=-12.0
-offset_bottom=-8.0
+offset_left=14.0
+offset_top=10.0
+offset_right=-14.0
+offset_bottom=-10.0
 grow_horizontal=2
 grow_vertical=2
 
 [node name="MissionInfo" type="VBoxContainer" parent="TopBar/HBoxContainer"]
-custom_minimum_size=Vector2(400, 0)
+custom_minimum_size=Vector2(420, 0)
 layout_mode=2
 size_flags_horizontal=3
 
@@ -130,7 +130,7 @@ size_flags_horizontal=3
 layout_mode=2
 theme_override_colors/font_color=Color(0.64705884, 0.12156863, 0.16862746, 1)
 theme_override_fonts/font_size=10
-text="SHADOW PROTOCOL // BLACKWATER CITY"
+text="SHADOW PROTOCOL // BLACKWATER CITY // DISTRICT 7"
 
 [node name="MissionTitle" type="Label" parent="TopBar/HBoxContainer/MissionInfo"]
 layout_mode=2
@@ -142,10 +142,10 @@ text="A NEW BEGINNING"
 layout_mode=2
 theme_override_colors/font_color=Color(0.52156866, 0.54509807, 0.5803922, 1)
 theme_override_fonts/font_size=11
-text="Explore the starting area"
+text="Explore the starting area (0/30m)"
 
 [node name="StatsContainer" type="VBoxContainer" parent="TopBar/HBoxContainer"]
-custom_minimum_size=Vector2(180, 0)
+custom_minimum_size=Vector2(200, 0)
 layout_mode=2
 
 [node name="HealthLabel" type="Label" parent="TopBar/HBoxContainer/StatsContainer"]
@@ -155,7 +155,7 @@ theme_override_fonts/font_size=10
 text="HP: 100%"
 
 [node name="HealthBar" type="ProgressBar" parent="TopBar/HBoxContainer/StatsContainer"]
-custom_minimum_size=Vector2(0, 8)
+custom_minimum_size=Vector2(0, 10)
 layout_mode=2
 theme_override_styles/background=SubResource("StyleBoxFlat_health_bg")
 theme_override_styles/fill=SubResource("StyleBoxFlat_health_fg")
@@ -169,7 +169,7 @@ theme_override_fonts/font_size=10
 text="STA: 100%"
 
 [node name="StaminaBar" type="ProgressBar" parent="TopBar/HBoxContainer/StatsContainer"]
-custom_minimum_size=Vector2(0, 6)
+custom_minimum_size=Vector2(0, 8)
 layout_mode=2
 theme_override_styles/background=SubResource("StyleBoxFlat_health_bg")
 theme_override_styles/fill=SubResource("StyleBoxFlat_stamina_fg")
@@ -177,10 +177,11 @@ value=100.0
 show_percentage=false
 
 [node name="PauseButton" type="Button" parent="TopBar/HBoxContainer"]
-custom_minimum_size=Vector2(44, 44)
+custom_minimum_size=Vector2(48, 48)
 layout_mode=2
 theme_override_styles/normal=SubResource("StyleBoxFlat_button")
 theme_override_styles/hover=SubResource("StyleBoxFlat_button_active")
+theme_override_styles/pressed=SubResource("StyleBoxFlat_button_active")
 text="||"
 
 [node name="TopCenter" type="Control" parent="."]
@@ -189,18 +190,18 @@ anchors_preset=5
 anchor_left=0.5
 anchor_right=0.5
 anchor_bottom=0.5
-offset_left=-200.0
-offset_top=90.0
-offset_right=200.0
-offset_bottom=140.0
+offset_left=-220.0
+offset_top=95.0
+offset_right=220.0
+offset_bottom=145.0
 grow_horizontal=2
 
 [node name="NotificationPanel" type="Panel" parent="TopCenter"]
-custom_minimum_size=Vector2(0, 40)
+custom_minimum_size=Vector2(0, 44)
 layout_mode=1
 anchors_preset=10
 anchor_right=1.0
-offset_bottom=40.0
+offset_bottom=44.0
 grow_horizontal=2
 visible=false
 theme_override_styles/panel=SubResource("StyleBoxFlat_notif")
@@ -210,16 +211,17 @@ layout_mode=1
 anchors_preset=15
 anchor_right=1.0
 anchor_bottom=1.0
-offset_left=12.0
-offset_top=6.0
-offset_right=-12.0
-offset_bottom=-6.0
+offset_left=14.0
+offset_top=8.0
+offset_right=-14.0
+offset_bottom=-8.0
 grow_horizontal=2
 grow_vertical=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
 theme_override_fonts/font_size=12
 text="Mission Started: A NEW BEGINNING"
 horizontal_alignment=1
+autowrap_mode=3
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode=3
@@ -231,7 +233,7 @@ grow_vertical=2
 mouse_filter=2
 
 [node name="InteractionPrompt" type="Panel" parent="CenterContainer"]
-custom_minimum_size=Vector2(240, 36)
+custom_minimum_size=Vector2(280, 42)
 layout_mode=2
 visible=false
 theme_override_styles/panel=SubResource("StyleBoxFlat_prompt")
@@ -241,14 +243,14 @@ layout_mode=1
 anchors_preset=15
 anchor_right=1.0
 anchor_bottom=1.0
-offset_left=12.0
-offset_top=4.0
-offset_right=-12.0
-offset_bottom=-4.0
+offset_left=14.0
+offset_top=6.0
+offset_right=-14.0
+offset_bottom=-6.0
 grow_horizontal=2
 grow_vertical=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=12
+theme_override_fonts/font_size=13
 text="[E] Talk to Marcus Reed"
 horizontal_alignment=1
 
@@ -257,7 +259,7 @@ layout_mode=3
 anchors_preset=15
 anchor_right=1.0
 anchor_bottom=1.0
-offset_left=640.0
+offset_left=580.0
 grow_horizontal=2
 grow_vertical=2
 mouse_filter=1
@@ -268,48 +270,48 @@ anchors_preset=12
 anchor_top=1.0
 anchor_right=1.0
 anchor_bottom=1.0
-offset_top=-160.0
-offset_bottom=-12.0
-offset_left=12.0
-offset_right=-12.0
+offset_top=-180.0
+offset_bottom=-14.0
+offset_left=14.0
+offset_right=-14.0
 grow_horizontal=2
 grow_vertical=0
 alignment=1
 
 [node name="JoystickContainer" type="Control" parent="BottomBar"]
-custom_minimum_size=Vector2(140, 140)
+custom_minimum_size=Vector2(160, 160)
 layout_mode=2
 size_flags_horizontal=0
 size_flags_vertical=0
 
 [node name="JoystickBase" type="Panel" parent="BottomBar/JoystickContainer"]
-custom_minimum_size=Vector2(120, 120)
+custom_minimum_size=Vector2(140, 140)
 layout_mode=1
 anchors_preset=8
 anchor_left=0.5
 anchor_top=0.5
 anchor_right=0.5
 anchor_bottom=0.5
-offset_left=-60.0
-offset_top=-60.0
-offset_right=60.0
-offset_bottom=60.0
+offset_left=-70.0
+offset_top=-70.0
+offset_right=70.0
+offset_bottom=70.0
 grow_horizontal=2
 grow_vertical=2
 theme_override_styles/panel=SubResource("StyleBoxFlat_joystick_base")
 
 [node name="JoystickKnob" type="Panel" parent="BottomBar/JoystickContainer/JoystickBase"]
-custom_minimum_size=Vector2(50, 50)
+custom_minimum_size=Vector2(60, 60)
 layout_mode=1
 anchors_preset=8
 anchor_left=0.5
 anchor_top=0.5
 anchor_right=0.5
 anchor_bottom=0.5
-offset_left=-25.0
-offset_top=-25.0
-offset_right=25.0
-offset_bottom=25.0
+offset_left=-30.0
+offset_top=-30.0
+offset_right=30.0
+offset_bottom=30.0
 grow_horizontal=2
 grow_vertical=2
 mouse_filter=2
@@ -324,10 +326,10 @@ layout_mode=2
 alignment=2
 
 [node name="InteractButton" type="Button" parent="BottomBar/RightControls"]
-custom_minimum_size=Vector2(64, 64)
+custom_minimum_size=Vector2(72, 72)
 layout_mode=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=20
+theme_override_fonts/font_size=22
 theme_override_styles/normal=SubResource("StyleBoxFlat_button")
 theme_override_styles/hover=SubResource("StyleBoxFlat_button_active")
 theme_override_styles/pressed=SubResource("StyleBoxFlat_button_active")
@@ -335,20 +337,20 @@ theme_override_styles/disabled=SubResource("StyleBoxFlat_button")
 text="◉"
 
 [node name="JumpButton" type="Button" parent="BottomBar/RightControls"]
-custom_minimum_size=Vector2(64, 64)
+custom_minimum_size=Vector2(72, 72)
 layout_mode=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=12
+theme_override_fonts/font_size=13
 theme_override_styles/normal=SubResource("StyleBoxFlat_button")
 theme_override_styles/hover=SubResource("StyleBoxFlat_button_active")
 theme_override_styles/pressed=SubResource("StyleBoxFlat_button_active")
 text="JUMP"
 
 [node name="SprintButton" type="Button" parent="BottomBar/RightControls"]
-custom_minimum_size=Vector2(64, 64)
+custom_minimum_size=Vector2(72, 72)
 layout_mode=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=10
+theme_override_fonts/font_size=11
 theme_override_styles/normal=SubResource("StyleBoxFlat_button")
 theme_override_styles/hover=SubResource("StyleBoxFlat_button_active")
 theme_override_styles/pressed=SubResource("StyleBoxFlat_button_active")
