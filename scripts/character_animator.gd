@@ -12,7 +12,7 @@ extends Node
 @export var left_leg_path: NodePath
 @export var right_leg_path: NodePath
 @export var character_root_path: NodePath
-@export var skeleton_path: NodePath = NodePath("../AlexModel/Armature_Root/Skeleton3D")
+@export var skeleton_path: NodePath = NodePath("") # Auto-detect via recursive search for Godot 4 GLB compatibility
 
 var torso: MeshInstance3D = null
 var head: MeshInstance3D = null
@@ -105,36 +105,57 @@ func _ready():
 			animation_player.play("idle")
 
 func _find_skeleton() -> Skeleton3D:
-	# Try explicit path
-	if skeleton_path != NodePath(""):
+	# Try explicit path if provided
+	if skeleton_path != NodePath("") and skeleton_path != null:
 		var node = get_node_or_null(skeleton_path)
 		if node is Skeleton3D:
+			print("[CharacterAnimator] Found skeleton via explicit path: ", skeleton_path)
 			return node
 	
-	# Try common GLB import paths
+	# Try common GLB import paths for Godot 4 - covers multiple importer variations
 	var search_paths = [
 		"../AlexModel/Armature_Root/Skeleton3D",
 		"../AlexModel/Skeleton3D",
 		"../AlexModel/Armature/Skeleton3D",
 		"../../AlexModel/Armature_Root/Skeleton3D",
 		"../CharacterRoot/AlexModel/Armature_Root/Skeleton3D",
+		"../AlexModel/Armature_Root/Hips", # In some imports, Hips becomes Skeleton3D
+		"../AlexModel/Hips",
+		"../AlexModel/Armature_Root",
 	]
 	for p in search_paths:
 		var node = get_node_or_null(p)
 		if node is Skeleton3D:
+			print("[CharacterAnimator] Found skeleton via search path: ", p)
 			return node
+		# Also check if node has Skeleton3D child
+		if node:
+			var child_skel = _recursive_find_skeleton(node)
+			if child_skel:
+				print("[CharacterAnimator] Found skeleton via child search of: ", p)
+				return child_skel
 	
-	# Recursive search from CharacterRoot
+	# Recursive search from CharacterRoot - most robust
 	if character_root:
 		var found = _recursive_find_skeleton(character_root)
 		if found:
+			print("[CharacterAnimator] Found skeleton via recursive search from CharacterRoot")
 			return found
 	
-	# Search from parent
+	# Search from parent (CharacterRoot's parent is Player)
 	var parent = get_parent()
 	if parent:
 		var found = _recursive_find_skeleton(parent)
 		if found:
+			print("[CharacterAnimator] Found skeleton via recursive search from parent")
+			return found
+	
+	# Search from Player root
+	var player = get_node_or_null("../../Player") or get_node_or_null("../..") or get_tree().get_first_node_in_group("player")
+	if player:
+		var found = _recursive_find_skeleton(player)
+		if found:
+			print("[CharacterAnimator] Found skeleton via recursive search from Player")
 			return found
 	
 	return null
@@ -185,6 +206,14 @@ func _cache_bones():
 	
 	print("[CharacterAnimator] Cached bones: ", bone_map.keys())
 
+func _find_animation_by_substring(player: AnimationPlayer, substr: String) -> String:
+	if not player:
+		return ""
+	for anim_name in player.get_animation_list():
+		if substr.to_lower() in anim_name.to_lower():
+			return anim_name
+	return ""
+
 func update_animation(delta: float, state: String, speed: float, grounded: bool, v_vel: float):
 	current_state = state
 	move_speed = speed
@@ -192,18 +221,37 @@ func update_animation(delta: float, state: String, speed: float, grounded: bool,
 	vertical_velocity = v_vel
 	time += delta
 	
-	# If we have AnimationPlayer with real animations, use it
-	if glb_animation_player and glb_animation_player.has_animation(state):
-		if glb_animation_player.current_animation != state:
-			glb_animation_player.play(state, 0.2)
-		return
+	# If we have GLB AnimationPlayer with real animations, use it - robust substring search
+	if glb_animation_player:
+		var exact = glb_animation_player.has_animation(state)
+		var fuzzy = _find_animation_by_substring(glb_animation_player, state)
+		var anim_to_play = ""
+		if exact:
+			anim_to_play = state
+		elif fuzzy != "":
+			anim_to_play = fuzzy
+		
+		if anim_to_play != "":
+			if glb_animation_player.current_animation != anim_to_play:
+				glb_animation_player.play(anim_to_play, 0.2)
+				print("[CharacterAnimator] Playing GLB anim: ", anim_to_play, " for state ", state)
+			return
 	
-	if animation_player and animation_player.has_animation(state):
-		if animation_player.current_animation != state:
-			animation_player.play(state, 0.2)
-		return
+	if animation_player:
+		var exact = animation_player.has_animation(state)
+		var fuzzy = _find_animation_by_substring(animation_player, state)
+		var anim_to_play = ""
+		if exact:
+			anim_to_play = state
+		elif fuzzy != "":
+			anim_to_play = fuzzy
+		
+		if anim_to_play != "":
+			if animation_player.current_animation != anim_to_play:
+				animation_player.play(anim_to_play, 0.2)
+			return
 	
-	# Otherwise procedural animation
+	# Otherwise procedural animation - preserves skeleton compatibility
 	if has_skeleton:
 		_procedural_skeleton_animate(delta)
 	else:
@@ -477,15 +525,29 @@ func _animate_land(delta: float):
 		torso.rotation.x = crouch * 1.5
 
 func play_animation(name: String, blend: float = 0.2):
-	if glb_animation_player and glb_animation_player.has_animation(name):
-		glb_animation_player.play(name, blend)
-		current_state = name
-		print("[CharacterAnimator] Playing GLB animation: ", name)
-		return
-	if animation_player and animation_player.has_animation(name):
-		animation_player.play(name, blend)
-		current_state = name
-		print("[CharacterAnimator] Playing legacy animation: ", name)
+	if glb_animation_player:
+		if glb_animation_player.has_animation(name):
+			glb_animation_player.play(name, blend)
+			current_state = name
+			print("[CharacterAnimator] Playing GLB animation: ", name)
+			return
+		var fuzzy = _find_animation_by_substring(glb_animation_player, name)
+		if fuzzy != "" and glb_animation_player.has_animation(fuzzy):
+			glb_animation_player.play(fuzzy, blend)
+			current_state = fuzzy
+			print("[CharacterAnimator] Playing GLB animation (fuzzy): ", fuzzy, " for ", name)
+			return
+	if animation_player:
+		if animation_player.has_animation(name):
+			animation_player.play(name, blend)
+			current_state = name
+			print("[CharacterAnimator] Playing legacy animation: ", name)
+			return
+		var fuzzy = _find_animation_by_substring(animation_player, name)
+		if fuzzy != "" and animation_player.has_animation(fuzzy):
+			animation_player.play(fuzzy, blend)
+			current_state = fuzzy
+			print("[CharacterAnimator] Playing legacy animation (fuzzy): ", fuzzy)
 
 func get_current_animation() -> String:
 	if glb_animation_player:
