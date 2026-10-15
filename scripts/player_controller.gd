@@ -290,7 +290,7 @@ func _update_animation(delta: float):
 
 # Mobile controls interface
 func set_move_input(input: Vector2):
-	move_input = input.clamped(Vector2(-1, -1), Vector2(1, 1))
+	move_input = input.clamp(Vector2(-1, -1), Vector2(1, 1))
 	# Deadzone
 	if move_input.length() < 0.15:
 		move_input = Vector2.ZERO
@@ -310,7 +310,7 @@ func set_sprinting(sprinting: bool):
 	# Update audio
 	var audio_mgr = get_tree().get_first_node_in_group("audio_manager")
 	if audio_mgr and audio_mgr.has_method("set_walking"):
-		var moving = move_input.length() > 0.1 or Input.get_vector(\"move_left\", \"move_right\", \"move_forward\", \"move_back\").length() > 0.1
+		var moving = move_input.length() > 0.1 or Input.get_vector("move_left", "move_right", "move_forward", "move_back").length() > 0.1
 		if moving and can_move:
 			audio_mgr.set_walking(true, is_sprinting, global_position)
 

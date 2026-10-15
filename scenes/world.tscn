@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://m1a2r3k4e5r6d7e8" path="res://scenes/destination_marker.tscn" id="7"]
 [ext_resource type="PackedScene" uid="uid://r1e2s3i4d5e6n7t8" path="res://scenes/building_residential.tscn" id="8"]
 [ext_resource type="PackedScene" uid="uid://c1o2m3m4e5r6c7i8" path="res://scenes/building_commercial.tscn" id="9"]
-[ext_resource type="PackedScene" uid="uid://n1i2g3h4t5e6n7t8" path="res://scenes/nightfall.tscn" id="10"]
+[ext_resource type="PackedScene" uid="uid://n1i2g3h4t5f6a7l8" path="res://scenes/nightfall.tscn" id="10"]
 [ext_resource type="PackedScene" uid="uid://d1r2i3v4i5n6g7h8" path="res://ui/driving_hud.tscn" id="11"]
 [ext_resource type="Script" path="res://scripts/wanted_manager.gd" id="12"]
 [ext_resource type="Script" path="res://scripts/audio_manager.gd" id="13"]
@@ -24,7 +24,7 @@ ambient_light_energy=0.38
 fog_enabled=true
 fog_light_color=Color(0.08235294, 0.09019608, 0.10588235, 1)
 fog_light_energy=0.22
-fog_sun_amount=0.12
+fog_sun_scatter=0.12
 fog_density=0.007
 fog_sky_affect=0.25
 tonemap_mode=2
@@ -759,12 +759,12 @@ grow_vertical=2
 [node name="SpeakerLabel" type="Label" parent="DialogueUI/DialoguePanel/VBoxContainer"]
 layout_mode=2
 theme_override_colors/font_color=Color(0.64705884, 0.12156863, 0.16862746, 1)
-theme_override_fonts/font_size=12
+theme_override_font_sizes/font_size=12
 text="MARCUS REED"
 
 [node name="DialogueLabel" type="Label" parent="DialogueUI/DialoguePanel/VBoxContainer"]
 layout_mode=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=14
+theme_override_font_sizes/font_size=14
 text="Alex... you actually came back."
 autowrap_mode=3

@@ -90,7 +90,9 @@ func interact():
 			return
 		var player = get_tree().get_first_node_in_group("player")
 		if not player:
-			player = get_node_or_null("../../Player") or get_node_or_null("../../../Player")
+			player = get_node_or_null("../../Player")
+			if player == null:
+				player = get_node_or_null("../../../Player")
 		
 		if player:
 			emit_signal("vehicle_enter_requested", vehicle)

@@ -140,12 +140,23 @@ func _ready():
 		if vehicle.has_signal("player_exited_vehicle"):
 			vehicle.player_exited_vehicle.connect(_on_vehicle_exited)
 	
-	dialogue_ui = get_node_or_null("../DialogueUI") or get_node_or_null("../../DialogueUI")
+	# DialogueUI (CanvasLayer) is a direct child of the World root, as is this
+	# MissionManager node (scenes/world.tscn), so the sibling path is "../DialogueUI".
+	dialogue_ui = _find_dialogue_ui()
+	if dialogue_ui == null:
+		push_warning("[MissionManager] DialogueUI CanvasLayer not found (expected sibling \"DialogueUI\" under World). Dialogue UI will be disabled.")
 	
 	_setup_interactable_connections()
 	
 	await get_tree().create_timer(1.2).timeout
 	start_mission()
+
+func _find_dialogue_ui() -> CanvasLayer:
+	# Typed lookup: returns null (never a Boolean) when the node is missing or is not a CanvasLayer.
+	var node: CanvasLayer = get_node_or_null("../DialogueUI") as CanvasLayer
+	if node == null:
+		node = get_tree().get_first_node_in_group("dialogue_ui") as CanvasLayer
+	return node
 
 func _find_marker(node: Node) -> Node3D:
 	if node == null:

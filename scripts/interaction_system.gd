@@ -22,7 +22,9 @@ func _ready():
 	await get_tree().process_frame
 	player = get_tree().get_first_node_in_group("player")
 	if player == null:
-		player = get_node_or_null("../Player") or get_node_or_null("../../Player")
+		player = get_node_or_null("../Player") as CharacterBody3D
+		if player == null:
+			player = get_node_or_null("../../Player") as CharacterBody3D
 	
 	# Find all interactables
 	_scan_for_interactables()
@@ -120,7 +122,7 @@ func get_prompt_text() -> String:
 		return current_interactable.get_prompt()
 	return ""
 
-func _process(delta):
+func _process(_delta):
 	# Update current interactable periodically if multiple in range
 	if interactables_in_range.size() > 1:
 		_update_current()

@@ -129,19 +129,19 @@ size_flags_horizontal=3
 [node name="GameTitle" type="Label" parent="TopBar/HBoxContainer/MissionInfo"]
 layout_mode=2
 theme_override_colors/font_color=Color(0.64705884, 0.12156863, 0.16862746, 1)
-theme_override_fonts/font_size=10
+theme_override_font_sizes/font_size=10
 text="SHADOW PROTOCOL // BLACKWATER CITY // DISTRICT 7"
 
 [node name="MissionTitle" type="Label" parent="TopBar/HBoxContainer/MissionInfo"]
 layout_mode=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=14
+theme_override_font_sizes/font_size=14
 text="A NEW BEGINNING"
 
 [node name="ObjectiveLabel" type="Label" parent="TopBar/HBoxContainer/MissionInfo"]
 layout_mode=2
 theme_override_colors/font_color=Color(0.52156866, 0.54509807, 0.5803922, 1)
-theme_override_fonts/font_size=11
+theme_override_font_sizes/font_size=11
 text="Explore the starting area (0/30m)"
 
 [node name="StatsContainer" type="VBoxContainer" parent="TopBar/HBoxContainer"]
@@ -151,7 +151,7 @@ layout_mode=2
 [node name="HealthLabel" type="Label" parent="TopBar/HBoxContainer/StatsContainer"]
 layout_mode=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=10
+theme_override_font_sizes/font_size=10
 text="HP: 100%"
 
 [node name="HealthBar" type="ProgressBar" parent="TopBar/HBoxContainer/StatsContainer"]
@@ -165,7 +165,7 @@ show_percentage=false
 [node name="StaminaLabel" type="Label" parent="TopBar/HBoxContainer/StatsContainer"]
 layout_mode=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=10
+theme_override_font_sizes/font_size=10
 text="STA: 100%"
 
 [node name="StaminaBar" type="ProgressBar" parent="TopBar/HBoxContainer/StatsContainer"]
@@ -218,7 +218,7 @@ offset_bottom=-8.0
 grow_horizontal=2
 grow_vertical=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=12
+theme_override_font_sizes/font_size=12
 text="Mission Started: A NEW BEGINNING"
 horizontal_alignment=1
 autowrap_mode=3
@@ -250,7 +250,7 @@ offset_bottom=-6.0
 grow_horizontal=2
 grow_vertical=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=13
+theme_override_font_sizes/font_size=13
 text="[E] Talk to Marcus Reed"
 horizontal_alignment=1
 
@@ -329,7 +329,7 @@ alignment=2
 custom_minimum_size=Vector2(72, 72)
 layout_mode=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=22
+theme_override_font_sizes/font_size=22
 theme_override_styles/normal=SubResource("StyleBoxFlat_button")
 theme_override_styles/hover=SubResource("StyleBoxFlat_button_active")
 theme_override_styles/pressed=SubResource("StyleBoxFlat_button_active")
@@ -340,7 +340,7 @@ text="◉"
 custom_minimum_size=Vector2(72, 72)
 layout_mode=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=13
+theme_override_font_sizes/font_size=13
 theme_override_styles/normal=SubResource("StyleBoxFlat_button")
 theme_override_styles/hover=SubResource("StyleBoxFlat_button_active")
 theme_override_styles/pressed=SubResource("StyleBoxFlat_button_active")
@@ -350,7 +350,7 @@ text="JUMP"
 custom_minimum_size=Vector2(72, 72)
 layout_mode=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=11
+theme_override_font_sizes/font_size=11
 theme_override_styles/normal=SubResource("StyleBoxFlat_button")
 theme_override_styles/hover=SubResource("StyleBoxFlat_button_active")
 theme_override_styles/pressed=SubResource("StyleBoxFlat_button_active")

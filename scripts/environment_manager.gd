@@ -39,7 +39,6 @@ func _setup_fog():
 	
 	world_env = get_tree().get_first_node_in_group("world_environment")
 	if not world_env:
-		world_env = get_viewport().get_world_3d().environment
 		# Try to find WorldEnvironment in scene
 		var root = get_tree().current_scene
 		if root:
@@ -50,9 +49,8 @@ func _setup_fog():
 		env.fog_enabled = true
 		env.fog_light_color = fog_color
 		env.fog_light_energy = 0.35
-		env.fog_sun_amount = 0.15
+		env.fog_sun_scatter = 0.15
 		env.fog_density = fog_density
-		env.fog_height_enabled = true
 		env.fog_height = 0.0
 		env.fog_height_density = fog_height_falloff
 		env.fog_sky_affect = 0.3

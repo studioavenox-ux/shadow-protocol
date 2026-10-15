@@ -4,11 +4,11 @@ extends CanvasLayer
 # Mobile driving controls, speedometer, vehicle condition, mission objective, wanted indicators
 # Compact landscape, center clear, reuse existing HUD
 
-@onready var mission_title_label: Label = $TopBar/MissionInfo/MissionTitle
-@onready var objective_label: Label = $TopBar/MissionInfo/ObjectiveLabel
-@onready var speed_label: Label = $TopBar/VehicleStats/SpeedLabel
-@onready var health_bar: ProgressBar = $TopBar/VehicleStats/HealthBar
-@onready var pause_button: Button = $TopBar/PauseButton
+@onready var mission_title_label: Label = $TopBar/HBoxContainer/MissionInfo/MissionTitle
+@onready var objective_label: Label = $TopBar/HBoxContainer/MissionInfo/ObjectiveLabel
+@onready var speed_label: Label = $TopBar/HBoxContainer/VehicleStats/SpeedLabel
+@onready var health_bar: ProgressBar = $TopBar/HBoxContainer/VehicleStats/HealthBar
+@onready var pause_button: Button = $TopBar/HBoxContainer/PauseButton
 
 @onready var speed_value_label: Label = $Speedometer/VBoxContainer/SpeedValue
 @onready var gear_label: Label = $Speedometer/VBoxContainer/GearLabel
@@ -143,8 +143,8 @@ func _setup_phase4_ui():
 		style.corner_radius_bottom_right = 6
 		wanted_panel.add_theme_stylebox_override("panel", style)
 		
-		# Place in TopBar - we'll add as child of TopBar/VehicleStats or TopBar itself
-		var vehicle_stats = $TopBar/VehicleStats
+		# Place in TopBar - we'll add as child of TopBar/HBoxContainer/VehicleStats or TopBar itself
+		var vehicle_stats = $TopBar/HBoxContainer/VehicleStats
 		if vehicle_stats:
 			# Create container for wanted inside VehicleStats
 			wanted_panel.custom_minimum_size = Vector2(120, 35)
@@ -344,7 +344,7 @@ func _on_wanted_level_changed(new_level: int, old_level: int):
 func _update_wanted_display(level: int):
 	if not wanted_panel:
 		# Try to find
-		wanted_panel = get_node_or_null("TopBar/VehicleStats/WantedPanel")
+		wanted_panel = get_node_or_null("TopBar/HBoxContainer/VehicleStats/WantedPanel")
 		if wanted_panel:
 			wanted_label = wanted_panel.get_node_or_null("WantedVBox/WantedLabel")
 			wanted_stars = wanted_panel.get_node_or_null("WantedVBox/WantedStars")
