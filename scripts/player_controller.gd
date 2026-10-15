@@ -294,12 +294,25 @@ func set_move_input(input: Vector2):
 	# Deadzone
 	if move_input.length() < 0.15:
 		move_input = Vector2.ZERO
+	
+	# Audio footstep hook - Phase 4
+	var audio_mgr = get_tree().get_first_node_in_group("audio_manager")
+	if audio_mgr and audio_mgr.has_method("set_walking"):
+		var moving = move_input.length() > 0.1 and can_move and is_on_floor()
+		audio_mgr.set_walking(moving, is_sprinting, global_position)
 
 func set_sprinting(sprinting: bool):
 	if sprinting and stamina > 5.0:
 		is_sprinting = true
 	else:
 		is_sprinting = false
+	
+	# Update audio
+	var audio_mgr = get_tree().get_first_node_in_group("audio_manager")
+	if audio_mgr and audio_mgr.has_method("set_walking"):
+		var moving = move_input.length() > 0.1 or Input.get_vector(\"move_left\", \"move_right\", \"move_forward\", \"move_back\").length() > 0.1
+		if moving and can_move:
+			audio_mgr.set_walking(true, is_sprinting, global_position)
 
 func set_camera_input(input: Vector2):
 	camera_input = input

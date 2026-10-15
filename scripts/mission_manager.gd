@@ -256,6 +256,13 @@ func complete_objective(index: int):
 	print("[MissionManager] Objective completed: ", objectives[index].title)
 	emit_signal("show_notification", "✓ " + objectives[index].title, 2.8)
 	
+	# Audio feedback - mission completion audio hook
+	var audio_mgr = get_tree().get_first_node_in_group("audio_manager")
+	if audio_mgr and audio_mgr.has_method("play_mission_complete") and index == objectives.size() - 1:
+		audio_mgr.play_mission_complete()
+	elif audio_mgr and audio_mgr.has_method("play_interaction_feedback"):
+		audio_mgr.play_interaction_feedback()
+	
 	if index == current_objective:
 		current_objective += 1
 		if current_objective < objectives.size():
@@ -357,13 +364,32 @@ func trigger_area_entered(area_id: String):
 				has_reached_garage = true
 		"ParkingTrigger":
 			if current_objective == 4:
-				# Check if vehicle is stopped
-				if vehicle and vehicle.get_speed_kmh() < 5.0:
-					complete_objective(4)
-					has_parked = true
-					emit_signal("show_notification", "Parked - exit vehicle", 2.5)
+				# Phase 4: Require proper garage positioning - check speed AND garage bounds
+				if not vehicle:
+					vehicle = get_tree().get_first_node_in_group("vehicle")
+				if vehicle:
+					var speed_ok = vehicle.get_speed_kmh() < 5.0
+					var pos = vehicle.global_position
+					# Garage bounds: Iron Gate Garage floor 26x32 at 0,0,75 - allow margin
+					# Garage area: x in [-15, 15], z in [60, 92], y near 0-5
+					var in_garage_bounds = pos.x > -16 and pos.x < 16 and pos.z > 58 and pos.z < 94 and pos.y < 6.0
+					# Also check distance to garage center (0,0,75) < 18
+					var garage_center = Vector3(0, pos.y, 75)
+					var dist_to_center = pos.distance_to(garage_center)
+					var properly_positioned = in_garage_bounds and dist_to_center < 20.0
+					
+					if not speed_ok:
+						emit_signal("show_notification", "Stop the vehicle to park (%.0f km/h)" % vehicle.get_speed_kmh(), 2.0)
+					elif not properly_positioned:
+						emit_signal("show_notification", "Position vehicle properly inside garage [%.0fm from center]" % dist_to_center, 2.5)
+						print("[MissionManager] Parking failed - not properly positioned: pos ", pos, " dist ", dist_to_center, " bounds ", in_garage_bounds)
+					else:
+						complete_objective(4)
+						has_parked = true
+						emit_signal("show_notification", "Parked inside Iron Gate Garage - exit vehicle", 2.5)
+						print("[MissionManager] Parking succeeded - properly positioned at ", pos)
 				else:
-					emit_signal("show_notification", "Stop the vehicle to park", 2.0)
+					emit_signal("show_notification", "Vehicle not found", 1.5)
 
 func _complete_mission():
 	if mission_state == MissionState.COMPLETED:

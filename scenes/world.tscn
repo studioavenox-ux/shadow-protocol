@@ -9,8 +9,11 @@
 [ext_resource type="PackedScene" uid="uid://m1a2r3k4e5r6d7e8" path="res://scenes/destination_marker.tscn" id="7"]
 [ext_resource type="PackedScene" uid="uid://r1e2s3i4d5e6n7t8" path="res://scenes/building_residential.tscn" id="8"]
 [ext_resource type="PackedScene" uid="uid://c1o2m3m4e5r6c7i8" path="res://scenes/building_commercial.tscn" id="9"]
-[ext_resource type="PackedScene" uid="uid://n1i2g3h4t5f6a7l8" path="res://scenes/nightfall.tscn" id="10"]
+[ext_resource type="PackedScene" uid="uid://n1i2g3h4t5e6n7t8" path="res://scenes/nightfall.tscn" id="10"]
 [ext_resource type="PackedScene" uid="uid://d1r2i3v4i5n6g7h8" path="res://ui/driving_hud.tscn" id="11"]
+[ext_resource type="Script" path="res://scripts/wanted_manager.gd" id="12"]
+[ext_resource type="Script" path="res://scripts/audio_manager.gd" id="13"]
+[ext_resource type="Script" path="res://scripts/environment_manager.gd" id="14"]
 
 [sub_resource type="Environment" id="Environment_world"]
 background_mode=1
@@ -400,12 +403,12 @@ transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.2, 0)
 mesh=SubResource("SphereMesh_light")
 surface_material_override/0=SubResource("StandardMaterial3D_light_emissive")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="Streetlights/Streetlight1"]
+[node name="OmniLight3D" type="OmniLight3D" parent="Streetlights/Streetlight1" groups=["streetlight"]]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
 light_color=Color(0.95, 0.85, 0.6, 1)
 light_energy=1.4
 omni_range=20.0
-shadow_enabled=true
+shadow_enabled=false
 
 [node name="Streetlight2" type="Node3D" parent="Streetlights"]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -50)
@@ -420,12 +423,12 @@ transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.2, 0)
 mesh=SubResource("SphereMesh_light")
 surface_material_override/0=SubResource("StandardMaterial3D_light_emissive")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="Streetlights/Streetlight2"]
+[node name="OmniLight3D" type="OmniLight3D" parent="Streetlights/Streetlight2" groups=["streetlight"]]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
 light_color=Color(0.95, 0.85, 0.6, 1)
 light_energy=1.4
 omni_range=20.0
-shadow_enabled=true
+shadow_enabled=false
 
 [node name="Streetlight3" type="Node3D" parent="Streetlights"]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, -20)
@@ -440,7 +443,7 @@ transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.2, 0)
 mesh=SubResource("SphereMesh_light")
 surface_material_override/0=SubResource("StandardMaterial3D_light_emissive")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="Streetlights/Streetlight3"]
+[node name="OmniLight3D" type="OmniLight3D" parent="Streetlights/Streetlight3" groups=["streetlight"]]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
 light_color=Color(0.95, 0.85, 0.6, 1)
 light_energy=1.3
@@ -460,7 +463,7 @@ transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.2, 0)
 mesh=SubResource("SphereMesh_light")
 surface_material_override/0=SubResource("StandardMaterial3D_light_emissive")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="Streetlights/Streetlight4"]
+[node name="OmniLight3D" type="OmniLight3D" parent="Streetlights/Streetlight4" groups=["streetlight"]]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
 light_color=Color(0.95, 0.85, 0.6, 1)
 light_energy=1.3
@@ -480,11 +483,12 @@ transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.2, 0)
 mesh=SubResource("SphereMesh_light")
 surface_material_override/0=SubResource("StandardMaterial3D_light_emissive")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="Streetlights/Streetlight5"]
+[node name="OmniLight3D" type="OmniLight3D" parent="Streetlights/Streetlight5" groups=["streetlight"]]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
 light_color=Color(0.95, 0.85, 0.6, 1)
 light_energy=1.2
 omni_range=16.0
+shadow_enabled=false
 
 [node name="Streetlight6" type="Node3D" parent="Streetlights"]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, 15)
@@ -499,11 +503,12 @@ transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.2, 0)
 mesh=SubResource("SphereMesh_light")
 surface_material_override/0=SubResource("StandardMaterial3D_light_emissive")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="Streetlights/Streetlight6"]
+[node name="OmniLight3D" type="OmniLight3D" parent="Streetlights/Streetlight6" groups=["streetlight"]]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 0)
 light_color=Color(0.95, 0.85, 0.6, 1)
 light_energy=1.2
 omni_range=16.0
+shadow_enabled=false
 
 [node name="Props" type="Node3D" parent="."]
 
@@ -692,6 +697,27 @@ billboard=1
 
 [node name="MissionManager" type="Node" parent="." groups=["mission_manager"]]
 script=ExtResource("2")
+
+[node name="WantedManager" type="Node" parent="." groups=["wanted_manager"]]
+script=ExtResource("12")
+max_wanted_level=3
+wanted_decay_time=30.0
+search_duration=20.0
+escape_time_required=12.0
+police_spawn_distance_min=35.0
+police_spawn_distance_max=80.0
+police_detection_range=60.0
+police_los_range=45.0
+
+[node name="AudioManager" type="Node" parent="." groups=["audio_manager"]]
+script=ExtResource("13")
+
+[node name="EnvironmentManager" type="Node" parent="." groups=["environment_manager"]]
+script=ExtResource("14")
+fog_enabled=true
+fog_density=0.008
+streetlight_flicker_enabled=true
+nighttime_enabled=true
 
 [node name="UI" type="CanvasLayer" parent="."]
 

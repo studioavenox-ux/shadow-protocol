@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/vehicle_controller.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/vehicle_interactable.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/driving_camera.gd" id="3"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_body"]
 size=Vector3(1.9, 0.8, 4.4)
@@ -253,8 +254,19 @@ shape=SubResource("BoxShape3D_interact")
 [node name="ExitMarker" type="Marker3D" parent="."]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 0.5, 0)
 
-[node name="CameraPivot" type="Node3D" parent="."]
+[node name="CameraPivot" type="Node3D" parent="." node_paths=PackedStringArray("spring_arm", "camera")]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, -2.5)
+script=ExtResource("3")
+follow_speed=6.0
+rotation_speed=3.0
+mouse_sensitivity=0.004
+touch_sensitivity=0.005
+min_pitch=-15.0
+max_pitch=20.0
+default_distance=6.0
+min_distance=3.0
+max_distance=10.0
+reversing_distance=4.5
 
 [node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot"]
 transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

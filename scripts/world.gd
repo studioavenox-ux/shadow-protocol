@@ -1,7 +1,7 @@
 extends Node3D
 
-# World - Blackwater City Phase 3: Vehicle Integration
-# Manages environment, triggers, interaction, mission, vehicle, HUD switching
+# World - Blackwater City Phase 4: Police Pursuit & Audio
+# Manages environment, triggers, interaction, mission, vehicle, HUD switching, police, audio
 
 @onready var player: CharacterBody3D = $Player
 @onready var mission_manager = $MissionManager
@@ -17,10 +17,16 @@ var destination_marker: Node3D = null
 var vehicle: VehicleBody3D = null
 var is_in_vehicle: bool = false
 
+# Phase 4 managers
+var wanted_manager: Node = null
+var audio_manager: Node = null
+var environment_manager: Node = null
+
 func _ready():
-	print("[World] Phase 3 - Blackwater City with NIGHTFALL vehicle...")
+	print("[World] Phase 4 - Blackwater City with NIGHTFALL + Police Pursuit + Audio...")
 	
 	_setup_environment()
+	_setup_phase4_managers()
 	_setup_interactables()
 	_setup_triggers()
 	_setup_destination_marker()
@@ -45,7 +51,7 @@ func _ready():
 	if mission_manager and mission_manager.has_signal("show_notification"):
 		mission_manager.show_notification.emit("Find the NIGHTFALL sedan - black sports car", 4.0)
 	
-	print("[World] Blackwater City ready - NIGHTFALL parked - EVERY CHOICE LEAVES A TRACE - Phase 3")
+	print("[World] Blackwater City ready - Phase 4: Vehicle fixed, Police, Audio - EVERY CHOICE LEAVES A TRACE")
 
 func _setup_environment():
 	if directional_light:
@@ -54,6 +60,44 @@ func _setup_environment():
 		directional_light.shadow_blur = 1.2
 		directional_light.shadow_bias = 0.04
 		directional_light.rotation_degrees = Vector3(-50, 35, 0)
+
+func _setup_phase4_managers():
+	# Wanted Manager
+	if has_node("WantedManager"):
+		wanted_manager = $WantedManager
+	else:
+		# Create wanted manager
+		var wm_script = load("res://scripts/wanted_manager.gd")
+		if wm_script:
+			wanted_manager = Node.new()
+			wanted_manager.name = "WantedManager"
+			wanted_manager.set_script(wm_script)
+			add_child(wanted_manager)
+			print("[World] WantedManager created")
+	
+	# Audio Manager
+	if has_node("AudioManager"):
+		audio_manager = $AudioManager
+	else:
+		var am_script = load("res://scripts/audio_manager.gd")
+		if am_script:
+			audio_manager = Node.new()
+			audio_manager.name = "AudioManager"
+			audio_manager.set_script(am_script)
+			add_child(audio_manager)
+			print("[World] AudioManager created")
+	
+	# Environment Manager
+	if has_node("EnvironmentManager"):
+		environment_manager = $EnvironmentManager
+	else:
+		var em_script = load("res://scripts/environment_manager.gd")
+		if em_script:
+			environment_manager = Node.new()
+			environment_manager.name = "EnvironmentManager"
+			environment_manager.set_script(em_script)
+			add_child(environment_manager)
+			print("[World] EnvironmentManager created")
 
 func _setup_destination_marker():
 	destination_marker = get_node_or_null("GarageComplex/DestinationMarker")
@@ -87,14 +131,13 @@ func _setup_vehicle():
 			if not vehicle.player_exited_vehicle.is_connected(_on_player_exited_vehicle):
 				vehicle.player_exited_vehicle.connect(_on_player_exited_vehicle)
 		
-		# Setup vehicle HUD link
 		if driving_hud and driving_hud.has_method("set_vehicle"):
 			driving_hud.set_vehicle(vehicle)
 	else:
 		print("[World] WARNING: No vehicle found in scene!")
 
 func _find_vehicle(node: Node) -> VehicleBody3D:
-	if node is VehicleBody3D:
+	if node is VehicleBody3D and not node.is_in_group("police"):
 		return node as VehicleBody3D
 	for child in node.get_children():
 		var found = _find_vehicle(child)
@@ -103,7 +146,6 @@ func _find_vehicle(node: Node) -> VehicleBody3D:
 	return null
 
 func _setup_hud_switching():
-	# Initially on-foot HUD visible, driving HUD hidden
 	if game_hud:
 		game_hud.visible = true
 	if driving_hud:
@@ -137,15 +179,9 @@ func _setup_triggers():
 	for t_name in trigger_names:
 		var trigger = get_node_or_null("MissionTriggers/" + t_name)
 		if trigger and trigger is Area3D:
-			# Avoid duplicate connections
-			if not trigger.body_entered.is_connected(_on_trigger_entered_wrapper.bind(t_name)):
-				# Use lambda with capture
-				trigger.body_entered.connect(func(body): _on_trigger_entered(body, t_name))
+			trigger.body_entered.connect(func(body): _on_trigger_entered(body, t_name))
 			trigger.monitoring = true
 			print("[World] Trigger connected: ", t_name)
-
-func _on_trigger_entered_wrapper(body, trigger_id: String):
-	_on_trigger_entered(body, trigger_id)
 
 func _on_trigger_entered(body, trigger_id: String):
 	if not body.is_in_group("player") and not body.is_in_group("vehicle") and body.name != "Player" and not body is CharacterBody3D and not body is VehicleBody3D:
@@ -202,24 +238,26 @@ func _update_current_interactable():
 
 func _on_player_entered_vehicle(veh: VehicleBody3D):
 	is_in_vehicle = true
-	print("[World] Player entered vehicle - switching HUDs")
+	print("[World] Player entered vehicle - switching HUDs, preventing control conflict")
 	
-	# Switch HUDs
+	# Prevent control conflict: disable on-foot HUD, hide interaction prompts
 	if game_hud:
 		game_hud.visible = false
-		# Disable on-foot controls
 		if game_hud.has_method("clear_interaction_prompt"):
 			game_hud.clear_interaction_prompt()
+		# Disable mobile joystick
+		game_hud.process_mode = Node.PROCESS_MODE_DISABLED
+	
 	if driving_hud:
 		driving_hud.visible = true
+		driving_hud.process_mode = Node.PROCESS_MODE_INHERIT
 		if driving_hud.has_method("set_vehicle"):
 			driving_hud.set_vehicle(veh)
 	
-	# Clear interactables
 	interactables_in_range.clear()
 	current_interactable = null
 	
-	# Disable player camera, enable vehicle camera
+	# Camera switching
 	if player:
 		var player_cam_pivot = player.get_node_or_null("CameraPivot")
 		if player_cam_pivot:
@@ -233,18 +271,27 @@ func _on_player_entered_vehicle(veh: VehicleBody3D):
 			var veh_cam = veh_cam_pivot.get_node_or_null("SpringArm3D/Camera3D")
 			if veh_cam and veh_cam is Camera3D:
 				veh_cam.current = true
+	
+	# Police: vehicle theft increases wanted
+	if wanted_manager and wanted_manager.has_method("on_vehicle_theft"):
+		# Only if not already in vehicle mission context - for testing police
+		if mission_manager and mission_manager.current_objective > 2:
+			pass # Don't increase wanted during tutorial theft
+		else:
+			wanted_manager.on_vehicle_theft()
 
 func _on_player_exited_vehicle(veh: VehicleBody3D):
 	is_in_vehicle = false
-	print("[World] Player exited vehicle - restoring HUDs")
+	print("[World] Player exited vehicle - restoring HUDs, preventing control conflict")
 	
-	# Switch HUDs back
 	if driving_hud:
 		driving_hud.visible = false
+		driving_hud.process_mode = Node.PROCESS_MODE_DISABLED
+	
 	if game_hud:
 		game_hud.visible = true
+		game_hud.process_mode = Node.PROCESS_MODE_INHERIT
 	
-	# Restore player camera
 	if player:
 		var player_cam_pivot = player.get_node_or_null("CameraPivot")
 		if player_cam_pivot:
@@ -259,15 +306,15 @@ func _on_player_exited_vehicle(veh: VehicleBody3D):
 			if veh_cam and veh_cam is Camera3D:
 				veh_cam.current = false
 	
-	# Re-setup interactables
 	_setup_interactables()
 
 func _input(event):
 	if event.is_action_pressed("interact"):
 		if not is_in_vehicle and current_interactable:
 			current_interactable.interact()
+			if audio_manager and audio_manager.has_method("play_interaction_feedback"):
+				audio_manager.play_interaction_feedback()
 		elif is_in_vehicle and vehicle:
-			# Exit via E if safe
 			if vehicle.has_method("can_exit") and vehicle.can_exit():
 				vehicle.exit_vehicle()
 
@@ -280,6 +327,14 @@ func _process(delta):
 		if beacon_top:
 			var pulse = 1.0 + sin(Time.get_ticks_msec() / 300.0) * 0.1
 			beacon_top.scale = Vector3(pulse, pulse, pulse)
+	
+	# Check speeding for police
+	if is_in_vehicle and vehicle and wanted_manager:
+		var speed = vehicle.get_speed_kmh() if vehicle.has_method("get_speed_kmh") else 0.0
+		if speed > 100.0 and wanted_manager.has_method("on_speeding"):
+			# Only occasionally trigger to avoid spam
+			if randf() < 0.02:
+				wanted_manager.on_speeding(speed)
 
 func get_player() -> CharacterBody3D:
 	return player
@@ -295,3 +350,9 @@ func get_destination_marker() -> Node3D:
 
 func is_player_in_vehicle() -> bool:
 	return is_in_vehicle
+
+func get_wanted_manager():
+	return wanted_manager
+
+func get_audio_manager():
+	return audio_manager

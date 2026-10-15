@@ -1,0 +1,185 @@
+[gd_scene load_steps=14 format=3 uid="uid://police_bcpd_001"]
+
+[ext_resource type="Script" path="res://scripts/police_vehicle.gd" id="1"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_police"]
+size=Vector3(1.9, 1.1, 4.6)
+
+[sub_resource type="StandardMaterial3D" id="Mat_BodyWhite"]
+albedo_color=Color(0.95, 0.95, 0.96, 1)
+metallic=0.1
+roughness=0.35
+
+[sub_resource type="StandardMaterial3D" id="Mat_BodyBlack"]
+albedo_color=Color(0.08, 0.08, 0.09, 1)
+metallic=0.2
+roughness=0.4
+
+[sub_resource type="StandardMaterial3D" id="Mat_WindowDark"]
+albedo_color=Color(0.05, 0.12, 0.2, 1)
+metallic=0.8
+roughness=0.2
+
+[sub_resource type="StandardMaterial3D" id="Mat_SirenRed"]
+albedo_color=Color(0.9, 0.05, 0.05, 1)
+emission_enabled=true
+emission=Color(1, 0.1, 0.1, 1)
+emission_energy_multiplier=2.0
+
+[sub_resource type="StandardMaterial3D" id="Mat_SirenBlue"]
+albedo_color=Color(0.05, 0.15, 0.9, 1)
+emission_enabled=true
+emission=Color(0.1, 0.3, 1, 1)
+emission_energy_multiplier=2.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_Body"]
+size=Vector3(1.9, 1.0, 4.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_Roof"]
+size=Vector3(1.7, 0.3, 2.2)
+
+[sub_resource type="CylinderMesh" id="Cyl_Wheel"]
+top_radius=0.38
+bottom_radius=0.38
+height=0.35
+
+[sub_resource type="BoxMesh" id="BoxMesh_SirenBar"]
+size=Vector3(0.9, 0.15, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_SirenLight"]
+size=Vector3(0.22, 0.12, 0.15)
+
+[node name="PoliceVehicle" type="VehicleBody3D" groups=["police"]]
+mass=1750.0
+script=ExtResource("1")
+police_id="BCPD-01"
+max_engine_force=750.0
+max_brake_force=85.0
+max_steering_angle=0.55
+mass_value=1750.0
+detection_range=60.0
+pursuit_speed=18.0
+search_speed=8.0
+arrival_distance=4.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape=SubResource("BoxShape3D_police")
+
+[node name="BodyMesh" type="MeshInstance3D" parent="."]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh=SubResource("BoxMesh_Body")
+material_override=SubResource("Mat_BodyWhite")
+
+[node name="BlackSection" type="MeshInstance3D" parent="BodyMesh"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.2)
+mesh=SubResource("BoxMesh_Body")
+material_override=SubResource("Mat_BodyBlack")
+
+[node name="RoofMesh" type="MeshInstance3D" parent="."]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, -0.2)
+mesh=SubResource("BoxMesh_Roof")
+material_override=SubResource("Mat_BodyWhite")
+
+[node name="Windows" type="MeshInstance3D" parent="RoofMesh"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh=SubResource("BoxMesh_Roof")
+material_override=SubResource("Mat_WindowDark")
+
+[node name="SirenLights" type="Node3D" parent="."]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.38, -0.2)
+
+[node name="SirenBar" type="MeshInstance3D" parent="SirenLights"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh=SubResource("BoxMesh_SirenBar")
+material_override=SubResource("Mat_BodyBlack")
+
+[node name="SirenMeshLeft" type="MeshInstance3D" parent="SirenLights"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.1, 0)
+mesh=SubResource("BoxMesh_SirenLight")
+material_override=SubResource("Mat_SirenRed")
+
+[node name="SirenMeshRight" type="MeshInstance3D" parent="SirenLights"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.1, 0)
+mesh=SubResource("BoxMesh_SirenLight")
+material_override=SubResource("Mat_SirenBlue")
+
+[node name="SirenLeft" type="OmniLight3D" parent="SirenLights"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.25, 0.2, 0)
+light_color=Color(1, 0.1, 0.1, 1)
+omni_range=8.0
+light_energy=0.0
+shadow_enabled=false
+
+[node name="SirenRight" type="OmniLight3D" parent="SirenLights"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.25, 0.2, 0)
+light_color=Color(0.1, 0.3, 1, 1)
+omni_range=8.0
+light_energy=0.0
+shadow_enabled=false
+
+[node name="FrontLeftWheel" type="VehicleWheel3D" parent="."]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.95, 0.25, 1.5)
+wheel_radius=0.38
+wheel_rest_length=0.35
+suspension_travel=0.3
+suspension_stiffness=38.0
+damping_compression=4.8
+damping_relaxation=4.2
+use_as_traction=false
+use_as_steering=true
+
+[node name="FrontRightWheel" type="VehicleWheel3D" parent="FrontLeftWheel"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 0, 0)
+wheel_radius=0.38
+wheel_rest_length=0.35
+suspension_travel=0.3
+suspension_stiffness=38.0
+damping_compression=4.8
+damping_relaxation=4.2
+use_as_traction=false
+use_as_steering=true
+
+[node name="RearLeftWheel" type="VehicleWheel3D" parent="."]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.95, 0.25, -1.5)
+wheel_radius=0.38
+wheel_rest_length=0.35
+suspension_travel=0.32
+suspension_stiffness=42.0
+damping_compression=5.0
+damping_relaxation=4.5
+use_as_traction=true
+use_as_steering=false
+
+[node name="RearRightWheel" type="VehicleWheel3D" parent="RearLeftWheel"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.9, 0, 0)
+wheel_radius=0.38
+wheel_rest_length=0.35
+suspension_travel=0.32
+suspension_stiffness=42.0
+damping_compression=5.0
+damping_relaxation=4.5
+use_as_traction=true
+use_as_steering=false
+
+[node name="WheelMesh_FL" type="MeshInstance3D" parent="FrontLeftWheel"]
+mesh=SubResource("Cyl_Wheel")
+
+[node name="WheelMesh_FR" type="MeshInstance3D" parent="FrontRightWheel"]
+mesh=SubResource("Cyl_Wheel")
+
+[node name="WheelMesh_RL" type="MeshInstance3D" parent="RearLeftWheel"]
+mesh=SubResource("Cyl_Wheel")
+
+[node name="WheelMesh_RR" type="MeshInstance3D" parent="RearRightWheel"]
+mesh=SubResource("Cyl_Wheel")
+
+[node name="Markings" type="Node3D" parent="."]
+
+[node name="BCPD_Text" type="Label3D" parent="Markings"]
+transform=Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+text="BCPD"
+font_size=64
+modulate=Color(0, 0, 0, 1)
+outline_size=4
+outline_modulate=Color(1, 1, 1, 1)
+billboard=0
