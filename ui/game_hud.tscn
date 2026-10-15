@@ -1,0 +1,356 @@
+[gd_scene load_steps=14 format=3 uid="uid://d3g4a5m6e7h8u9d0"]
+
+[ext_resource type="Script" path="res://scripts/game_hud.gd" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_topbar"]
+bg_color=Color(0.03137255, 0.03529412, 0.043137256, 0.85)
+corner_radius_top_left=0
+corner_radius_top_right=0
+corner_radius_bottom_right=6
+corner_radius_bottom_left=6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_bg"]
+bg_color=Color(0.08235294, 0.09019608, 0.10588235, 1)
+corner_radius_top_left=2
+corner_radius_top_right=2
+corner_radius_bottom_right=2
+corner_radius_bottom_left=2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health_fg"]
+bg_color=Color(0.64705884, 0.12156863, 0.16862746, 1)
+corner_radius_top_left=2
+corner_radius_top_right=2
+corner_radius_bottom_right=2
+corner_radius_bottom_left=2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stamina_fg"]
+bg_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
+corner_radius_top_left=2
+corner_radius_top_right=2
+corner_radius_bottom_right=2
+corner_radius_bottom_left=2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joystick_base"]
+bg_color=Color(0.08235294, 0.09019608, 0.10588235, 0.6)
+border_width_left=1
+border_width_top=1
+border_width_right=1
+border_width_bottom=1
+border_color=Color(0.52156866, 0.54509807, 0.5803922, 0.3)
+corner_radius_top_left=60
+corner_radius_top_right=60
+corner_radius_bottom_right=60
+corner_radius_bottom_left=60
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_joystick_knob"]
+bg_color=Color(0.52156866, 0.54509807, 0.5803922, 0.8)
+corner_radius_top_left=25
+corner_radius_top_right=25
+corner_radius_bottom_right=25
+corner_radius_bottom_left=25
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
+bg_color=Color(0.08235294, 0.09019608, 0.10588235, 0.85)
+border_width_left=1
+border_width_top=1
+border_width_right=1
+border_width_bottom=1
+border_color=Color(0.52156866, 0.54509807, 0.5803922, 0.3)
+corner_radius_top_left=12
+corner_radius_top_right=12
+corner_radius_bottom_right=12
+corner_radius_bottom_left=12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_active"]
+bg_color=Color(0.64705884, 0.12156863, 0.16862746, 0.9)
+border_width_left=1
+border_width_top=1
+border_width_right=1
+border_width_bottom=1
+border_color=Color(0.9490196, 0.9490196, 0.9411765, 0.5)
+corner_radius_top_left=12
+corner_radius_top_right=12
+corner_radius_bottom_right=12
+corner_radius_bottom_left=12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prompt"]
+bg_color=Color(0.03137255, 0.03529412, 0.043137256, 0.9)
+border_width_left=2
+border_width_top=0
+border_width_right=0
+border_width_bottom=0
+border_color=Color(0.64705884, 0.12156863, 0.16862746, 1)
+corner_radius_top_left=4
+corner_radius_top_right=4
+corner_radius_bottom_right=4
+corner_radius_bottom_left=4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_notif"]
+bg_color=Color(0.08235294, 0.09019608, 0.10588235, 0.92)
+border_width_left=1
+border_width_top=1
+border_width_right=1
+border_width_bottom=1
+border_color=Color(0.64705884, 0.12156863, 0.16862746, 0.5)
+corner_radius_top_left=4
+corner_radius_top_right=4
+corner_radius_bottom_right=4
+corner_radius_bottom_left=4
+
+[node name="GameHUD" type="CanvasLayer"]
+script=ExtResource("1")
+
+[node name="TopBar" type="Panel" parent="."]
+custom_minimum_size=Vector2(0, 80)
+layout_mode=3
+anchors_preset=10
+anchor_right=1.0
+offset_bottom=80.0
+grow_horizontal=2
+theme_override_styles/panel=SubResource("StyleBoxFlat_topbar")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TopBar"]
+layout_mode=1
+anchors_preset=15
+anchor_right=1.0
+anchor_bottom=1.0
+offset_left=12.0
+offset_top=8.0
+offset_right=-12.0
+offset_bottom=-8.0
+grow_horizontal=2
+grow_vertical=2
+
+[node name="MissionInfo" type="VBoxContainer" parent="TopBar/HBoxContainer"]
+custom_minimum_size=Vector2(400, 0)
+layout_mode=2
+size_flags_horizontal=3
+
+[node name="GameTitle" type="Label" parent="TopBar/HBoxContainer/MissionInfo"]
+layout_mode=2
+theme_override_colors/font_color=Color(0.64705884, 0.12156863, 0.16862746, 1)
+theme_override_fonts/font_size=10
+text="SHADOW PROTOCOL // BLACKWATER CITY"
+
+[node name="MissionTitle" type="Label" parent="TopBar/HBoxContainer/MissionInfo"]
+layout_mode=2
+theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
+theme_override_fonts/font_size=14
+text="A NEW BEGINNING"
+
+[node name="ObjectiveLabel" type="Label" parent="TopBar/HBoxContainer/MissionInfo"]
+layout_mode=2
+theme_override_colors/font_color=Color(0.52156866, 0.54509807, 0.5803922, 1)
+theme_override_fonts/font_size=11
+text="Explore the starting area"
+
+[node name="StatsContainer" type="VBoxContainer" parent="TopBar/HBoxContainer"]
+custom_minimum_size=Vector2(180, 0)
+layout_mode=2
+
+[node name="HealthLabel" type="Label" parent="TopBar/HBoxContainer/StatsContainer"]
+layout_mode=2
+theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
+theme_override_fonts/font_size=10
+text="HP: 100%"
+
+[node name="HealthBar" type="ProgressBar" parent="TopBar/HBoxContainer/StatsContainer"]
+custom_minimum_size=Vector2(0, 8)
+layout_mode=2
+theme_override_styles/background=SubResource("StyleBoxFlat_health_bg")
+theme_override_styles/fill=SubResource("StyleBoxFlat_health_fg")
+value=100.0
+show_percentage=false
+
+[node name="StaminaLabel" type="Label" parent="TopBar/HBoxContainer/StatsContainer"]
+layout_mode=2
+theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
+theme_override_fonts/font_size=10
+text="STA: 100%"
+
+[node name="StaminaBar" type="ProgressBar" parent="TopBar/HBoxContainer/StatsContainer"]
+custom_minimum_size=Vector2(0, 6)
+layout_mode=2
+theme_override_styles/background=SubResource("StyleBoxFlat_health_bg")
+theme_override_styles/fill=SubResource("StyleBoxFlat_stamina_fg")
+value=100.0
+show_percentage=false
+
+[node name="PauseButton" type="Button" parent="TopBar/HBoxContainer"]
+custom_minimum_size=Vector2(44, 44)
+layout_mode=2
+theme_override_styles/normal=SubResource("StyleBoxFlat_button")
+theme_override_styles/hover=SubResource("StyleBoxFlat_button_active")
+text="||"
+
+[node name="TopCenter" type="Control" parent="."]
+layout_mode=3
+anchors_preset=5
+anchor_left=0.5
+anchor_right=0.5
+anchor_bottom=0.5
+offset_left=-200.0
+offset_top=90.0
+offset_right=200.0
+offset_bottom=140.0
+grow_horizontal=2
+
+[node name="NotificationPanel" type="Panel" parent="TopCenter"]
+custom_minimum_size=Vector2(0, 40)
+layout_mode=1
+anchors_preset=10
+anchor_right=1.0
+offset_bottom=40.0
+grow_horizontal=2
+visible=false
+theme_override_styles/panel=SubResource("StyleBoxFlat_notif")
+
+[node name="NotificationLabel" type="Label" parent="TopCenter/NotificationPanel"]
+layout_mode=1
+anchors_preset=15
+anchor_right=1.0
+anchor_bottom=1.0
+offset_left=12.0
+offset_top=6.0
+offset_right=-12.0
+offset_bottom=-6.0
+grow_horizontal=2
+grow_vertical=2
+theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
+theme_override_fonts/font_size=12
+text="Mission Started: A NEW BEGINNING"
+horizontal_alignment=1
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode=3
+anchors_preset=15
+anchor_right=1.0
+anchor_bottom=1.0
+grow_horizontal=2
+grow_vertical=2
+mouse_filter=2
+
+[node name="InteractionPrompt" type="Panel" parent="CenterContainer"]
+custom_minimum_size=Vector2(240, 36)
+layout_mode=2
+visible=false
+theme_override_styles/panel=SubResource("StyleBoxFlat_prompt")
+
+[node name="InteractionLabel" type="Label" parent="CenterContainer/InteractionPrompt"]
+layout_mode=1
+anchors_preset=15
+anchor_right=1.0
+anchor_bottom=1.0
+offset_left=12.0
+offset_top=4.0
+offset_right=-12.0
+offset_bottom=-4.0
+grow_horizontal=2
+grow_vertical=2
+theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
+theme_override_fonts/font_size=12
+text="[E] Talk to Marcus Reed"
+horizontal_alignment=1
+
+[node name="CameraLookArea" type="Control" parent="."]
+layout_mode=3
+anchors_preset=15
+anchor_right=1.0
+anchor_bottom=1.0
+offset_left=640.0
+grow_horizontal=2
+grow_vertical=2
+mouse_filter=1
+
+[node name="BottomBar" type="HBoxContainer" parent="."]
+layout_mode=3
+anchors_preset=12
+anchor_top=1.0
+anchor_right=1.0
+anchor_bottom=1.0
+offset_top=-160.0
+offset_bottom=-12.0
+offset_left=12.0
+offset_right=-12.0
+grow_horizontal=2
+grow_vertical=0
+alignment=1
+
+[node name="JoystickContainer" type="Control" parent="BottomBar"]
+custom_minimum_size=Vector2(140, 140)
+layout_mode=2
+size_flags_horizontal=0
+size_flags_vertical=0
+
+[node name="JoystickBase" type="Panel" parent="BottomBar/JoystickContainer"]
+custom_minimum_size=Vector2(120, 120)
+layout_mode=1
+anchors_preset=8
+anchor_left=0.5
+anchor_top=0.5
+anchor_right=0.5
+anchor_bottom=0.5
+offset_left=-60.0
+offset_top=-60.0
+offset_right=60.0
+offset_bottom=60.0
+grow_horizontal=2
+grow_vertical=2
+theme_override_styles/panel=SubResource("StyleBoxFlat_joystick_base")
+
+[node name="JoystickKnob" type="Panel" parent="BottomBar/JoystickContainer/JoystickBase"]
+custom_minimum_size=Vector2(50, 50)
+layout_mode=1
+anchors_preset=8
+anchor_left=0.5
+anchor_top=0.5
+anchor_right=0.5
+anchor_bottom=0.5
+offset_left=-25.0
+offset_top=-25.0
+offset_right=25.0
+offset_bottom=25.0
+grow_horizontal=2
+grow_vertical=2
+mouse_filter=2
+theme_override_styles/panel=SubResource("StyleBoxFlat_joystick_knob")
+
+[node name="CenterSpacer" type="Control" parent="BottomBar"]
+layout_mode=2
+size_flags_horizontal=3
+
+[node name="RightControls" type="HBoxContainer" parent="BottomBar"]
+layout_mode=2
+alignment=2
+
+[node name="InteractButton" type="Button" parent="BottomBar/RightControls"]
+custom_minimum_size=Vector2(64, 64)
+layout_mode=2
+theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
+theme_override_fonts/font_size=20
+theme_override_styles/normal=SubResource("StyleBoxFlat_button")
+theme_override_styles/hover=SubResource("StyleBoxFlat_button_active")
+theme_override_styles/pressed=SubResource("StyleBoxFlat_button_active")
+theme_override_styles/disabled=SubResource("StyleBoxFlat_button")
+text="◉"
+
+[node name="JumpButton" type="Button" parent="BottomBar/RightControls"]
+custom_minimum_size=Vector2(64, 64)
+layout_mode=2
+theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
+theme_override_fonts/font_size=12
+theme_override_styles/normal=SubResource("StyleBoxFlat_button")
+theme_override_styles/hover=SubResource("StyleBoxFlat_button_active")
+theme_override_styles/pressed=SubResource("StyleBoxFlat_button_active")
+text="JUMP"
+
+[node name="SprintButton" type="Button" parent="BottomBar/RightControls"]
+custom_minimum_size=Vector2(64, 64)
+layout_mode=2
+theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
+theme_override_fonts/font_size=10
+theme_override_styles/normal=SubResource("StyleBoxFlat_button")
+theme_override_styles/hover=SubResource("StyleBoxFlat_button_active")
+theme_override_styles/pressed=SubResource("StyleBoxFlat_button_active")
+text="SPRINT"
+toggle_mode=true

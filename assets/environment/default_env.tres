@@ -1,0 +1,26 @@
+[gd_resource type="Environment" format=3 uid="uid://b5x8y3k4l2m9n"]
+
+[resource]
+background_mode=1
+background_color=Color(0.03137255, 0.03529412, 0.043137256, 1)
+ambient_light_source=1
+ambient_light_color=Color(0.52156866, 0.54509807, 0.5803922, 1)
+ambient_light_energy=0.35
+fog_enabled=true
+fog_light_color=Color(0.08156864, 0.09019608, 0.10588235, 1)
+fog_light_energy=0.25
+fog_sun_amount=0.15
+fog_density=0.008
+fog_sky_affect=0.3
+tonemap_mode=2
+tonemap_exposure=1.0
+tonemap_white=1.2
+glow_enabled=true
+glow_intensity=0.25
+glow_strength=0.8
+glow_bloom=0.12
+ssr_enabled=false
+ssao_enabled=true
+ssao_radius=1.0
+ssao_intensity=1.2
+ssao_power=1.5
