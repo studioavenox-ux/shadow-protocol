@@ -11,7 +11,7 @@ config_version=5
 [application]
 name="SHADOW PROTOCOL"
 run/main_scene="res://scenes/main_menu.tscn"
-config/features=PackedStringArray("4.4")
+config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://assets/textures/icon.png"
 boot_splash/bg_color=Color(0.03137255, 0.03529412, 0.043137256, 1)
 

@@ -35,7 +35,9 @@ func _input(event):
 		elif current_state == GameState.PAUSED:
 			resume_game()
 
-func new_game():
+## Returns true when the world scene was loaded. Returns false (and reports an
+## error) when it could not be loaded, so the caller can keep the menu visible.
+func new_game() -> bool:
 	print("[GameManager] Starting new game...")
 	has_save = true
 	current_mission = "A NEW BEGINNING"
@@ -50,17 +52,27 @@ func new_game():
 		# Fallback: try loading via resource
 		var world_scene = load("res://scenes/world.tscn")
 		if world_scene:
-			get_tree().change_scene_to_packed(world_scene)
+			err = get_tree().change_scene_to_packed(world_scene)
+		if err != OK:
+			push_error("[GameManager] Could not load res://scenes/world.tscn (error %d). Staying on the main menu." % err)
+			current_state = GameState.MAIN_MENU
+			return false
+	return true
 
-func continue_game():
+## Returns true when the world scene was loaded (see new_game).
+func continue_game() -> bool:
 	if not has_save:
 		print("[GameManager] No save found, starting new game instead")
-		new_game()
-		return
+		return new_game()
 	print("[GameManager] Continuing game...")
 	current_state = GameState.PLAYING
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://scenes/world.tscn")
+	var err = get_tree().change_scene_to_file("res://scenes/world.tscn")
+	if err != OK:
+		push_error("[GameManager] Could not load res://scenes/world.tscn (error %d). Staying on the main menu." % err)
+		current_state = GameState.MAIN_MENU
+		return false
+	return true
 
 func go_to_main_menu():
 	print("[GameManager] Returning to main menu...")

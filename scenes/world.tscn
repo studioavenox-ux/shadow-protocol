@@ -727,7 +727,7 @@ nighttime_enabled=true
 
 [node name="PauseMenu" parent="UI" instance=ExtResource("6")]
 
-[node name="DialogueUI" type="CanvasLayer" parent="."]
+[node name="DialogueUI" type="CanvasLayer" parent="." groups=["dialogue_ui"]]
 visible=false
 
 [node name="DialoguePanel" type="Panel" parent="DialogueUI"]

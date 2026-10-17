@@ -36,12 +36,11 @@ func _ready():
 	
 	# Find dialogue UI
 	# MarcusReed lives at World/GarageComplex/MarcusReed, so "../../DialogueUI" is World/DialogueUI.
+	dialogue_ui = null
 	if dialogue_ui_path != NodePath(""):
 		dialogue_ui = get_node_or_null(dialogue_ui_path) as CanvasLayer
-	else:
-		dialogue_ui = get_node_or_null("../../DialogueUI") as CanvasLayer
-		if dialogue_ui == null:
-			dialogue_ui = get_tree().get_first_node_in_group("dialogue_ui") as CanvasLayer
+	if dialogue_ui == null:
+		dialogue_ui = get_tree().get_first_node_in_group("dialogue_ui") as CanvasLayer
 	if dialogue_ui == null:
 		push_warning("[Marcus] DialogueUI CanvasLayer not found; dialogue text will not be shown.")
 	

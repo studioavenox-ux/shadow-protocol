@@ -266,15 +266,15 @@ func _on_joystick_input(event: InputEvent):
 		_update_joystick(touch_pos, center)
 
 func _update_joystick(touch_pos: Vector2, center: Vector2):
-	var offset = touch_pos - center
-	var distance = offset.length()
+	var knob_offset = touch_pos - center
+	var distance = knob_offset.length()
 	
 	if distance > _max_joystick_dist:
-		offset = offset.normalized() * _max_joystick_dist
+		knob_offset = knob_offset.normalized() * _max_joystick_dist
 	
-	joystick_knob.position = center + offset - joystick_knob.size / 2
+	joystick_knob.position = center + knob_offset - joystick_knob.size / 2
 	
-	var vector = offset / _max_joystick_dist
+	var vector = knob_offset / _max_joystick_dist
 	if vector.length() < 0.15:
 		vector = Vector2.ZERO
 	

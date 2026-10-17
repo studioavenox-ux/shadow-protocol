@@ -2,14 +2,62 @@ extends SceneTree
 
 # Validation for Phase 4 - Audio, Immersion & Police Pursuit
 # Run with: godot --headless -s res://scripts/validation_phase4.gd
+#
+# Exit code: 0 when every check passes, 1 when any check fails (including any
+# script that fails to compile). Warnings do not fail the run.
+#
+# The checks run from _process (not _init) so that autoloads such as
+# GameManager are registered before any script is compiled. Compiling in _init
+# produced "Identifier not found: GameManager" and made the harness unreliable.
 
-func _init():
+var _ran := false
+
+func _process(_delta: float) -> bool:
+	if _ran:
+		return false
+	_ran = true
+	_run_validation()
+	return false
+
+# Recursively collect every .gd file under a res:// directory.
+func _list_scripts(dir_path: String, out: Array) -> Array:
+	var dir := DirAccess.open(dir_path)
+	if dir == null:
+		return out
+	dir.list_dir_begin()
+	var entry := dir.get_next()
+	while entry != "":
+		if not entry.begins_with("."):
+			var full := dir_path.path_join(entry)
+			if dir.current_is_dir():
+				_list_scripts(full, out)
+			elif entry.ends_with(".gd"):
+				out.append(full)
+		entry = dir.get_next()
+	dir.list_dir_end()
+	return out
+
+func _run_validation() -> void:
 	print("\n=== PHASE 4 VALIDATION ===\n")
 	
 	var passed = 0
 	var failed = 0
 	var warnings = 0
 	
+	# Compile every script in the project. A script that fails to parse or
+	# compile is a hard failure, even if its source text looks correct.
+	print("--- Script Compile Check (all res:// .gd files) ---")
+	var all_scripts: Array = _list_scripts("res://", [])
+	for script_path in all_scripts:
+		var compiled = load(script_path)
+		var ok: bool = compiled is GDScript and compiled.can_instantiate()
+		if ok:
+			print("✓ ", script_path)
+			passed += 1
+		else:
+			print("✗ COMPILE FAILED: ", script_path)
+			failed += 1
+
 	# Check files exist
 	var required_files = [
 		"res://scripts/vehicle_controller.gd",
@@ -236,4 +284,4 @@ func _init():
 	else:
 		print("\n✗ VALIDATION FAILED - ", failed, " issues\n")
 	
-	quit()
+	quit(0 if failed == 0 else 1)
