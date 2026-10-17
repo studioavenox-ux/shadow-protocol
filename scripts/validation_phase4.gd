@@ -44,6 +44,21 @@ func _run_validation() -> void:
 	var failed = 0
 	var warnings = 0
 	
+	# Autoloads declared in project.godot must exist in the live scene root.
+	# Scripts such as game_hud.gd and main_menu.gd reference GameManager directly,
+	# so an unregistered autoload would break compilation or runtime calls.
+	print("--- Autoload Registration (project.godot [autoload]) ---")
+	for prop in ProjectSettings.get_property_list():
+		var setting_name: String = prop["name"]
+		if setting_name.begins_with("autoload/"):
+			var autoload_name := setting_name.trim_prefix("autoload/")
+			if root.get_node_or_null(autoload_name) != null:
+				print("✓ autoload registered: ", autoload_name)
+				passed += 1
+			else:
+				print("✗ AUTOLOAD NOT REGISTERED: ", autoload_name)
+				failed += 1
+
 	# Compile every script in the project. A script that fails to parse or
 	# compile is a hard failure, even if its source text looks correct.
 	print("--- Script Compile Check (all res:// .gd files) ---")
