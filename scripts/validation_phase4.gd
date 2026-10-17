@@ -35,8 +35,8 @@ func _init():
 	# Check vehicle controller
 	print("\n--- Vehicle Controller Fixes ---")
 	if ResourceLoader.exists("res://scripts/vehicle_controller.gd"):
-		var script = load("res://scripts/vehicle_controller.gd")
-		var source = script.source_code if script is GDScript else ""
+		var loaded_script = load("res://scripts/vehicle_controller.gd")
+		var source = loaded_script.source_code if loaded_script is GDScript else ""
 		# Check for gradual steering
 		if source.contains("gradual_steering_enabled") and source.contains("target_steering_input"):
 			print("✓ Gradual steering implemented")
@@ -69,8 +69,8 @@ func _init():
 	# Check driving camera
 	print("\n--- Driving Camera ---")
 	if ResourceLoader.exists("res://scripts/driving_camera.gd"):
-		var script = load("res://scripts/driving_camera.gd")
-		var source = script.source_code if script is GDScript else ""
+		var loaded_script = load("res://scripts/driving_camera.gd")
+		var source = loaded_script.source_code if loaded_script is GDScript else ""
 		if source.contains("is_reversing") and source.contains("auto_center"):
 			print("✓ Driving/reversing camera behavior")
 			passed += 1
@@ -81,8 +81,8 @@ func _init():
 	# Check wanted manager
 	print("\n--- Wanted Manager ---")
 	if ResourceLoader.exists("res://scripts/wanted_manager.gd"):
-		var script = load("res://scripts/wanted_manager.gd")
-		var source = script.source_code if script is GDScript else ""
+		var loaded_script = load("res://scripts/wanted_manager.gd")
+		var source = loaded_script.source_code if loaded_script is GDScript else ""
 		if source.contains("WantedLevel") and source.contains("LEVEL_0") and source.contains("LEVEL_3"):
 			print("✓ 3 wanted levels (0-3)")
 			passed += 1
@@ -121,8 +121,8 @@ func _init():
 	# Check police vehicle
 	print("\n--- Police Vehicle ---")
 	if ResourceLoader.exists("res://scripts/police_vehicle.gd"):
-		var script = load("res://scripts/police_vehicle.gd")
-		var source = script.source_code if script is GDScript else ""
+		var loaded_script = load("res://scripts/police_vehicle.gd")
+		var source = loaded_script.source_code if loaded_script is GDScript else ""
 		if source.contains("set_target_position") and source.contains("last_known"):
 			print("✓ Police receives last known position")
 			passed += 1
@@ -147,8 +147,8 @@ func _init():
 	# Check audio
 	print("\n--- Audio System ---")
 	if ResourceLoader.exists("res://scripts/audio_manager.gd"):
-		var script = load("res://scripts/audio_manager.gd")
-		var source = script.source_code if script is GDScript else ""
+		var loaded_script = load("res://scripts/audio_manager.gd")
+		var source = loaded_script.source_code if loaded_script is GDScript else ""
 		if source.contains("engine_loop_path") and source.contains("tire_squeal_path") and source.contains("city_ambience_path"):
 			print("✓ Audio optional paths documented")
 			passed += 1
@@ -173,8 +173,8 @@ func _init():
 	# Check environment
 	print("\n--- Environment ---")
 	if ResourceLoader.exists("res://scripts/environment_manager.gd"):
-		var script = load("res://scripts/environment_manager.gd")
-		var source = script.source_code if script is GDScript else ""
+		var loaded_script = load("res://scripts/environment_manager.gd")
+		var source = loaded_script.source_code if loaded_script is GDScript else ""
 		if source.contains("fog_enabled") and source.contains("streetlight_flicker"):
 			print("✓ Fog and streetlight variation")
 			passed += 1
@@ -185,8 +185,8 @@ func _init():
 	# Check HUD
 	print("\n--- HUD ---")
 	if ResourceLoader.exists("res://scripts/driving_hud.gd"):
-		var script = load("res://scripts/driving_hud.gd")
-		var source = script.source_code if script is GDScript else ""
+		var loaded_script = load("res://scripts/driving_hud.gd")
+		var source = loaded_script.source_code if loaded_script is GDScript else ""
 		if source.contains("wanted") and source.contains("police_alert") and source.contains("minimap"):
 			print("✓ Wanted indicators, police alert, minimap/pursuit direction")
 			passed += 1
@@ -197,8 +197,8 @@ func _init():
 	# Check mission manager parking
 	print("\n--- Mission Parking Fix ---")
 	if ResourceLoader.exists("res://scripts/mission_manager.gd"):
-		var script = load("res://scripts/mission_manager.gd")
-		var source = script.source_code if script is GDScript else ""
+		var loaded_script = load("res://scripts/mission_manager.gd")
+		var source = loaded_script.source_code if loaded_script is GDScript else ""
 		if source.contains("garage_bounds") or source.contains("in_garage_bounds") and source.contains("properly_positioned"):
 			print("✓ Parking requires proper garage positioning")
 			passed += 1
