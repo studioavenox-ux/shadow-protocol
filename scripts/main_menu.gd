@@ -101,10 +101,13 @@ func _on_new_game_pressed():
 	tween.tween_property(self, "modulate:a", 0.0, 0.5)
 	await tween.finished
 	
+	var started := false
 	if GameManager:
-		GameManager.new_game()
+		started = GameManager.new_game()
 	else:
-		get_tree().change_scene_to_file("res://scenes/world.tscn")
+		started = get_tree().change_scene_to_file("res://scenes/world.tscn") == OK
+	if not started:
+		_restore_after_failed_transition()
 
 func _on_continue_pressed():
 	print("[MainMenu] Continue pressed")
@@ -118,10 +121,19 @@ func _on_continue_pressed():
 	tween.tween_property(self, "modulate:a", 0.0, 0.5)
 	await tween.finished
 	
+	var started := false
 	if GameManager:
-		GameManager.continue_game()
+		started = GameManager.continue_game()
 	else:
-		get_tree().change_scene_to_file("res://scenes/world.tscn")
+		started = get_tree().change_scene_to_file("res://scenes/world.tscn") == OK
+	if not started:
+		_restore_after_failed_transition()
+
+# The menu fades out before the scene change. If the change fails, the menu
+# would stay transparent and the window would look blank, so bring it back.
+func _restore_after_failed_transition() -> void:
+	modulate.a = 1.0
+	push_error("[MainMenu] Scene change to the world failed; the menu has been restored.")
 
 func _on_settings_pressed():
 	print("[MainMenu] Settings pressed")

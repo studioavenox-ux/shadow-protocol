@@ -225,14 +225,14 @@ func _physics_process(delta):
 func _handle_input(delta):
 	var accel = 0.0
 	var steer = 0.0
-	var brake = 0.0
+	var brake_amount = 0.0
 	
 	# Keyboard for PC testing - W/S
 	if Input.is_action_pressed("move_forward") or Input.is_action_pressed("accelerate"):
 		accel += 1.0
 	if Input.is_action_pressed("move_back") or Input.is_action_pressed("brake"):
 		if current_speed > 1.5:
-			brake = 1.0
+			brake_amount = 1.0
 		else:
 			accel -= 0.65
 			is_reversing = true
@@ -280,10 +280,10 @@ func _handle_input(delta):
 		if abs(steering_input) > 0.1:
 			steer = steering_input
 		if brake_input > 0.1:
-			brake = brake_input
+			brake_amount = brake_input
 		throttle_input = accel
 		steering_input = steer
-		brake_input = brake
+		brake_input = brake_amount
 		return
 	
 	# For gradual mode, combine
@@ -299,11 +299,11 @@ func _handle_input(delta):
 			throttle_input = accel
 		
 		# Brake
-		if brake_input > 0.1 and brake < 0.1:
+		if brake_input > 0.1 and brake_amount < 0.1:
 			# Keep mobile brake
 			pass
 		else:
-			brake_input = brake
+			brake_input = brake_amount
 
 func _apply_engine_force():
 	var force = throttle_input * max_engine_force

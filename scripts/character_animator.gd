@@ -151,7 +151,11 @@ func _find_skeleton() -> Skeleton3D:
 			return found
 	
 	# Search from Player root
-	var player = get_node_or_null("../../Player") or get_node_or_null("../..") or get_tree().get_first_node_in_group("player")
+	var player = get_node_or_null("../../Player")
+	if player == null:
+		player = get_node_or_null("../..")
+	if player == null:
+		player = get_tree().get_first_node_in_group("player")
 	if player:
 		var found = _recursive_find_skeleton(player)
 		if found:
@@ -197,12 +201,12 @@ func _cache_bones():
 		return
 	# Cache bone indices by name for quick access
 	var bone_names = ["Hips", "Spine", "Chest", "Neck", "Head", "LeftShoulder", "LeftUpperArm", "LeftLowerArm", "LeftHand", "RightShoulder", "RightUpperArm", "RightLowerArm", "RightHand", "LeftUpperLeg", "LeftLowerLeg", "LeftFoot", "RightUpperLeg", "RightLowerLeg", "RightFoot"]
-	for name in bone_names:
-		var idx = skeleton.find_bone(name)
+	for bone_name in bone_names:
+		var idx = skeleton.find_bone(bone_name)
 		if idx != -1:
-			bone_map[name] = idx
+			bone_map[bone_name] = idx
 			# Cache initial pose
-			initial_bone_poses[name] = skeleton.get_bone_pose(idx)
+			initial_bone_poses[bone_name] = skeleton.get_bone_pose(idx)
 	
 	print("[CharacterAnimator] Cached bones: ", bone_map.keys())
 
@@ -279,7 +283,7 @@ func _procedural_skeleton_animate(delta: float):
 		_:
 			_animate_skeleton_idle(delta)
 
-func _animate_skeleton_idle(delta: float):
+func _animate_skeleton_idle(_delta: float):
 	var breath = sin(time * 1.2) * 0.02
 	var sway = sin(time * 0.7) * 0.02
 	
@@ -300,7 +304,7 @@ func _animate_skeleton_idle(delta: float):
 		t.basis = t.basis.rotated(Vector3.RIGHT, sin(time * 0.5) * 0.05)
 		skeleton.set_bone_pose(idx, t)
 
-func _animate_skeleton_walk(delta: float, freq: float, amp: float):
+func _animate_skeleton_walk(_delta: float, freq: float, _amp: float):
 	var cycle = time * freq
 	var swing = sin(cycle) * 0.6
 	var arm_swing = sin(cycle) * 0.8
@@ -361,7 +365,7 @@ func _animate_skeleton_walk(delta: float, freq: float, amp: float):
 		t.basis = t.basis.rotated(Vector3.FORWARD, sin(cycle) * 0.05)
 		skeleton.set_bone_pose(idx, t)
 
-func _animate_skeleton_jump(delta: float):
+func _animate_skeleton_jump(_delta: float):
 	if bone_map.has("LeftUpperLeg"):
 		var idx = bone_map["LeftUpperLeg"]
 		var base = initial_bone_poses.get("LeftUpperLeg", Transform3D())
@@ -387,7 +391,7 @@ func _animate_skeleton_jump(delta: float):
 		t.basis = t.basis.rotated(Vector3.RIGHT, -1.2)
 		skeleton.set_bone_pose(idx, t)
 
-func _animate_skeleton_fall(delta: float):
+func _animate_skeleton_fall(_delta: float):
 	if bone_map.has("LeftUpperLeg"):
 		var idx = bone_map["LeftUpperLeg"]
 		var base = initial_bone_poses.get("LeftUpperLeg", Transform3D())
@@ -401,7 +405,7 @@ func _animate_skeleton_fall(delta: float):
 		t.basis = t.basis.rotated(Vector3.RIGHT, 0.3)
 		skeleton.set_bone_pose(idx, t)
 
-func _animate_skeleton_land(delta: float):
+func _animate_skeleton_land(_delta: float):
 	var t_val = clamp(time * 3.0, 0.0, 1.0)
 	var crouch = sin(t_val * PI) * 0.3
 	if bone_map.has("LeftUpperLeg"):
@@ -513,7 +517,7 @@ func _animate_fall(delta: float):
 	if character_root:
 		character_root.position.y = lerp(character_root.position.y, 0.0, delta * 5.0)
 
-func _animate_land(delta: float):
+func _animate_land(_delta: float):
 	var t = clamp(time * 3.0, 0.0, 1.0)
 	var crouch = sin(t * PI) * 0.15
 	if character_root:
@@ -524,26 +528,26 @@ func _animate_land(delta: float):
 	if torso:
 		torso.rotation.x = crouch * 1.5
 
-func play_animation(name: String, blend: float = 0.2):
+func play_animation(anim_name: String, blend: float = 0.2):
 	if glb_animation_player:
-		if glb_animation_player.has_animation(name):
-			glb_animation_player.play(name, blend)
-			current_state = name
-			print("[CharacterAnimator] Playing GLB animation: ", name)
+		if glb_animation_player.has_animation(anim_name):
+			glb_animation_player.play(anim_name, blend)
+			current_state = anim_name
+			print("[CharacterAnimator] Playing GLB animation: ", anim_name)
 			return
-		var fuzzy = _find_animation_by_substring(glb_animation_player, name)
+		var fuzzy = _find_animation_by_substring(glb_animation_player, anim_name)
 		if fuzzy != "" and glb_animation_player.has_animation(fuzzy):
 			glb_animation_player.play(fuzzy, blend)
 			current_state = fuzzy
-			print("[CharacterAnimator] Playing GLB animation (fuzzy): ", fuzzy, " for ", name)
+			print("[CharacterAnimator] Playing GLB animation (fuzzy): ", fuzzy, " for ", anim_name)
 			return
 	if animation_player:
-		if animation_player.has_animation(name):
-			animation_player.play(name, blend)
-			current_state = name
-			print("[CharacterAnimator] Playing legacy animation: ", name)
+		if animation_player.has_animation(anim_name):
+			animation_player.play(anim_name, blend)
+			current_state = anim_name
+			print("[CharacterAnimator] Playing legacy animation: ", anim_name)
 			return
-		var fuzzy = _find_animation_by_substring(animation_player, name)
+		var fuzzy = _find_animation_by_substring(animation_player, anim_name)
 		if fuzzy != "" and animation_player.has_animation(fuzzy):
 			animation_player.play(fuzzy, blend)
 			current_state = fuzzy

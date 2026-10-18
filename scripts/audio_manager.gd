@@ -192,7 +192,7 @@ func play_police_siren(position: Vector3):
 		await siren_player.finished
 		siren_player.queue_free()
 
-func play_engine_sound(vehicle: VehicleBody3D):
+func play_engine_sound(_vehicle: VehicleBody3D):
 	# Handled by vehicle_controller directly with its own players
 	pass
 

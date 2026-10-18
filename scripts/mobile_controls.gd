@@ -36,7 +36,7 @@ func _input(event):
 	if event is InputEventKey:
 		_handle_keyboard_input(event)
 
-func _handle_keyboard_input(event: InputEventKey):
+func _handle_keyboard_input(_event: InputEventKey):
 	var move = Vector2.ZERO
 	if Input.is_action_pressed("move_forward"):
 		move.y -= 1
@@ -76,15 +76,15 @@ func _update_joystick(touch_pos: Vector2):
 	if joystick_base == null or joystick_knob == null:
 		return
 	
-	var offset = touch_pos - joystick_center
-	var distance = offset.length()
+	var knob_offset = touch_pos - joystick_center
+	var distance = knob_offset.length()
 	
 	if distance > joystick_max_distance:
-		offset = offset.normalized() * joystick_max_distance
+		knob_offset = knob_offset.normalized() * joystick_max_distance
 	
-	joystick_knob.position = joystick_base.size / 2 + offset - joystick_knob.size / 2
+	joystick_knob.position = joystick_base.size / 2 + knob_offset - joystick_knob.size / 2
 	
-	var vector = offset / joystick_max_distance
+	var vector = knob_offset / joystick_max_distance
 	if vector.length() < joystick_deadzone:
 		vector = Vector2.ZERO
 	

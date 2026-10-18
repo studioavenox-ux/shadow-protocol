@@ -108,11 +108,11 @@ func _setup_destination_marker():
 		destination_marker.add_to_group("destination_marker")
 		print("[World] Destination marker initialized")
 
-func _find_node_by_name(root: Node, name: String) -> Node:
-	if root.name == name:
+func _find_node_by_name(root: Node, node_name: String) -> Node:
+	if root.name == node_name:
 		return root
 	for child in root.get_children():
-		var found = _find_node_by_name(child, name)
+		var found = _find_node_by_name(child, node_name)
 		if found:
 			return found
 	return null
@@ -318,7 +318,7 @@ func _input(event):
 			if vehicle.has_method("can_exit") and vehicle.can_exit():
 				vehicle.exit_vehicle()
 
-func _process(delta):
+func _process(_delta):
 	if interactables_in_range.size() > 1 and player and not is_in_vehicle:
 		_update_current_interactable()
 	

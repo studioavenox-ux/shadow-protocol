@@ -3,17 +3,17 @@ extends CanvasLayer
 # Game HUD - Phase 4 with Wanted System
 # Includes mission info, health, stamina, mobile controls, interaction prompt, dialogue, wanted
 
-@onready var mission_title_label: Label = $TopBar/MissionInfo/MissionTitle
-@onready var objective_label: Label = $TopBar/MissionInfo/ObjectiveLabel
-@onready var health_bar: ProgressBar = $TopBar/StatsContainer/HealthBar
-@onready var stamina_bar: ProgressBar = $TopBar/StatsContainer/StaminaBar
-@onready var health_label: Label = $TopBar/StatsContainer/HealthLabel
-@onready var stamina_label: Label = $TopBar/StatsContainer/StaminaLabel
+@onready var mission_title_label: Label = $TopBar/HBoxContainer/MissionInfo/MissionTitle
+@onready var objective_label: Label = $TopBar/HBoxContainer/MissionInfo/ObjectiveLabel
+@onready var health_bar: ProgressBar = $TopBar/HBoxContainer/StatsContainer/HealthBar
+@onready var stamina_bar: ProgressBar = $TopBar/HBoxContainer/StatsContainer/StaminaBar
+@onready var health_label: Label = $TopBar/HBoxContainer/StatsContainer/HealthLabel
+@onready var stamina_label: Label = $TopBar/HBoxContainer/StatsContainer/StaminaLabel
 @onready var interaction_prompt: Panel = $CenterContainer/InteractionPrompt
 @onready var interaction_label: Label = $CenterContainer/InteractionPrompt/InteractionLabel
 @onready var notification_panel: Panel = $TopCenter/NotificationPanel
 @onready var notification_label: Label = $TopCenter/NotificationPanel/NotificationLabel
-@onready var pause_button: Button = $TopBar/PauseButton
+@onready var pause_button: Button = $TopBar/HBoxContainer/PauseButton
 
 # Mobile controls
 @onready var joystick_base: Panel = $BottomBar/JoystickContainer/JoystickBase
@@ -58,7 +58,11 @@ func _ready():
 	await get_tree().process_frame
 	player = get_tree().get_first_node_in_group("player")
 	if not player:
-		player = get_node_or_null("../../Player") or get_node_or_null("../Player") or get_node_or_null("/root/World/Player")
+		player = get_node_or_null("../../Player") as CharacterBody3D
+		if player == null:
+			player = get_node_or_null("../Player") as CharacterBody3D
+		if player == null:
+			player = get_node_or_null("/root/World/Player") as CharacterBody3D
 	
 	mission_manager = get_tree().get_first_node_in_group("mission_manager")
 	wanted_manager = get_tree().get_first_node_in_group("wanted_manager")
@@ -141,7 +145,7 @@ func _setup_phase4_ui():
 		style.corner_radius_bottom_right = 6
 		wanted_panel.add_theme_stylebox_override("panel", style)
 		
-		var stats = $TopBar/StatsContainer
+		var stats = $TopBar/HBoxContainer/StatsContainer
 		if stats:
 			stats.add_child(wanted_panel)
 			var vbox = VBoxContainer.new()
@@ -262,15 +266,15 @@ func _on_joystick_input(event: InputEvent):
 		_update_joystick(touch_pos, center)
 
 func _update_joystick(touch_pos: Vector2, center: Vector2):
-	var offset = touch_pos - center
-	var distance = offset.length()
+	var knob_offset = touch_pos - center
+	var distance = knob_offset.length()
 	
 	if distance > _max_joystick_dist:
-		offset = offset.normalized() * _max_joystick_dist
+		knob_offset = knob_offset.normalized() * _max_joystick_dist
 	
-	joystick_knob.position = center + offset - joystick_knob.size / 2
+	joystick_knob.position = center + knob_offset - joystick_knob.size / 2
 	
-	var vector = offset / _max_joystick_dist
+	var vector = knob_offset / _max_joystick_dist
 	if vector.length() < 0.15:
 		vector = Vector2.ZERO
 	
@@ -350,7 +354,9 @@ func _on_interact_pressed():
 func _on_pause_pressed():
 	if GameManager:
 		GameManager.pause_game()
-	var pause_menu = get_node_or_null("../PauseMenu") or get_node_or_null("/root/World/UI/PauseMenu")
+	var pause_menu = get_node_or_null("../PauseMenu")
+	if pause_menu == null:
+		pause_menu = get_node_or_null("/root/World/UI/PauseMenu")
 	if pause_menu:
 		pause_menu.visible = true
 
@@ -383,7 +389,7 @@ func _on_animation_state_changed(new_state: String):
 	elif sprint_button:
 		sprint_button.modulate = Color(1, 1, 1)
 
-func _on_objective_updated(index: int, description: String, completed: bool):
+func _on_objective_updated(_index: int, description: String, completed: bool):
 	if objective_label:
 		objective_label.text = description
 		if completed:
@@ -448,7 +454,7 @@ func _on_wanted_level_changed(new_level: int, old_level: int):
 
 func _update_wanted_display(level: int):
 	if not wanted_panel:
-		wanted_panel = get_node_or_null("TopBar/StatsContainer/WantedPanel")
+		wanted_panel = get_node_or_null("TopBar/HBoxContainer/StatsContainer/WantedPanel")
 		if wanted_panel:
 			wanted_label = wanted_panel.get_node_or_null("WantedVBox/WantedLabel")
 			wanted_stars = wanted_panel.get_node_or_null("WantedVBox/WantedStars")

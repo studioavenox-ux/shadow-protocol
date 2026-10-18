@@ -135,7 +135,7 @@ func _check_line_of_sight():
 		if dist < police_los_range:
 			police_in_range = true
 			# Raycast for LOS
-			var space_state = get_world_3d().direct_space_state
+			var space_state = get_viewport().get_world_3d().direct_space_state
 			var query = PhysicsRayQueryParameters3D.create(police.global_position + Vector3(0, 1, 0), player_pos + Vector3(0, 1, 0))
 			query.collision_mask = 1 # World
 			query.exclude = [police]
@@ -176,7 +176,7 @@ func _update_last_known_position():
 			if police.has_method("set_target_position"):
 				police.set_target_position(last_known_position)
 
-func _handle_alerted_state(delta):
+func _handle_alerted_state(_delta):
 	# Alerted state - police are aware but not yet pursuing actively
 	# Transition to pursuit after short delay or if player commits more crimes
 	if Time.get_ticks_msec() / 1000.0 - player_last_seen_time > 2.0:
@@ -337,7 +337,7 @@ func _spawn_police_if_needed():
 		var spawn_pos = player_pos + Vector3(cos(angle) * distance, 0, sin(angle) * distance)
 		
 		# Check if spawn pos is valid (not inside building, has ground)
-		var space_state = get_world_3d().direct_space_state
+		var space_state = get_viewport().get_world_3d().direct_space_state
 		var ground_query = PhysicsRayQueryParameters3D.create(spawn_pos + Vector3(0, 10, 0), spawn_pos + Vector3(0, -10, 0))
 		ground_query.collision_mask = 1
 		var ground_result = space_state.intersect_ray(ground_query)

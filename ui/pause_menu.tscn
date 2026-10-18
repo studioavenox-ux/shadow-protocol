@@ -32,7 +32,7 @@ corner_radius_bottom_left=4
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
 bg_color=Color(0.64705884, 0.12156863, 0.16862746, 1)
 
-[node name="PauseMenu" type="CanvasLayer" parent="."]
+[node name="PauseMenu" type="CanvasLayer"]
 visible=false
 
 [node name="Control" type="Control" parent="."]
@@ -69,14 +69,14 @@ alignment=1
 [node name="TitleLabel" type="Label" parent="Control/CenterContainer/VBoxContainer"]
 layout_mode=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=32
+theme_override_font_sizes/font_size=32
 text="PAUSED"
 horizontal_alignment=1
 
 [node name="Subtitle" type="Label" parent="Control/CenterContainer/VBoxContainer"]
 layout_mode=2
 theme_override_colors/font_color=Color(0.52156866, 0.54509807, 0.5803922, 1)
-theme_override_fonts/font_size=12
+theme_override_font_sizes/font_size=12
 text="SHADOW PROTOCOL"
 horizontal_alignment=1
 
@@ -144,7 +144,7 @@ alignment=1
 [node name="Label" type="Label" parent="Control/SettingsPanel/VBoxContainer"]
 layout_mode=2
 theme_override_colors/font_color=Color(0.9490196, 0.9490196, 0.9411765, 1)
-theme_override_fonts/font_size=24
+theme_override_font_sizes/font_size=24
 text="SETTINGS"
 horizontal_alignment=1
 

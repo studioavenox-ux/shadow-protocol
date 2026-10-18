@@ -35,12 +35,14 @@ func _ready():
 	one_shot = false
 	
 	# Find dialogue UI
+	# MarcusReed lives at World/GarageComplex/MarcusReed, so "../../DialogueUI" is World/DialogueUI.
+	dialogue_ui = null
 	if dialogue_ui_path != NodePath(""):
-		dialogue_ui = get_node_or_null(dialogue_ui_path)
-	else:
-		dialogue_ui = get_node_or_null("../../DialogueUI") or get_node_or_null("../../../DialogueUI")
-		if not dialogue_ui:
-			dialogue_ui = get_tree().get_first_node_in_group("dialogue_ui")
+		dialogue_ui = get_node_or_null(dialogue_ui_path) as CanvasLayer
+	if dialogue_ui == null:
+		dialogue_ui = get_tree().get_first_node_in_group("dialogue_ui") as CanvasLayer
+	if dialogue_ui == null:
+		push_warning("[Marcus] DialogueUI CanvasLayer not found; dialogue text will not be shown.")
 	
 	if dialogue_ui:
 		speaker_label = dialogue_ui.find_child("SpeakerLabel", true, false) as Label
@@ -50,7 +52,9 @@ func _ready():
 	# Find mission manager
 	mission_manager = get_tree().get_first_node_in_group("mission_manager")
 	if not mission_manager:
-		mission_manager = get_node_or_null("../../MissionManager") or get_node_or_null("../../../MissionManager")
+		mission_manager = get_node_or_null("../../MissionManager")
+		if mission_manager == null:
+			mission_manager = get_node_or_null("../../../MissionManager")
 	
 	print("[Marcus] NPC ready at position: ", global_position, " - Phase 2")
 
@@ -114,7 +118,7 @@ func _show_next_line():
 			current_dialogue_index += 1
 			_show_next_line()
 
-func _show_dialogue_line(line: String, index: int, auto_hide_duration: float = 0):
+func _show_dialogue_line(line: String, _index: int, auto_hide_duration: float = 0):
 	if dialogue_ui:
 		dialogue_ui.visible = true
 		if speaker_label:

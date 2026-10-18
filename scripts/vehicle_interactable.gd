@@ -52,14 +52,14 @@ func _ready():
 	collision_layer = 8
 	collision_mask = 2
 
-func _on_player_entered(veh: VehicleBody3D):
+func _on_player_entered(_veh: VehicleBody3D):
 	is_player_inside = true
 	prompt_text = exit_prompt
 	# Hide interaction when inside? Actually we need exit via HUD button
 	# But keep for keyboard E
 	print("[VehicleInteractable] Player inside vehicle")
 
-func _on_player_exited(veh: VehicleBody3D):
+func _on_player_exited(_veh: VehicleBody3D):
 	is_player_inside = false
 	prompt_text = enter_prompt
 	has_been_used = false
@@ -90,7 +90,9 @@ func interact():
 			return
 		var player = get_tree().get_first_node_in_group("player")
 		if not player:
-			player = get_node_or_null("../../Player") or get_node_or_null("../../../Player")
+			player = get_node_or_null("../../Player")
+			if player == null:
+				player = get_node_or_null("../../../Player")
 		
 		if player:
 			emit_signal("vehicle_enter_requested", vehicle)
